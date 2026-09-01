@@ -5,6 +5,23 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.2] - 2026-09-01
+
+Documentation only; no change to what the plugin does.
+
+- **The install warning about `msedge-tts` is not a warning under pnpm — it is
+  an error, and it fails the whole command.** Since a harness profile uses
+  pnpm, this is the case that actually matters, and 0.1.1 only described the
+  npm one. pnpm leaves `msedge-tts: set this to true or false` undecided in the
+  profile's `pnpm-workspace.yaml`, and until somebody decides, *every* install
+  in that profile fails — other people's plugins included. The READMEs now say
+  so, with the fix, in all three languages.
+- The Chinese version of that note shipped double-encoded in 0.1.1 and was
+  unreadable. Repaired.
+- Four tests over the published documents: none double-encoded, every relative
+  link resolves, the three languages of the traps document link to each other,
+  and the pnpm fix appears in all three READMEs rather than only in English.
+
 ## [0.1.1] - 2026-09-01
 
 Packaging only; no change to what the plugin does.
