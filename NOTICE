@@ -1,0 +1,24 @@
+dsh-kitt-voice — acknowledgements
+
+This plugin was designed after studying the existing voice plugins for the
+DeepSeek Harness. Where their approach informed this one, credit is due:
+
+- dsh-voice-mode (MIT) — qishuilalala
+  https://github.com/qishuilalala/dsh-voice-mode
+  Reference for the composer slot layout, the state machine of a voice turn
+  and the echo-pause behaviour while the reply is being read aloud.
+
+- dsh-ears (MIT) — WizisCool
+  https://github.com/WizisCool/dsh-ears
+  Reference for the speech-to-text provider layout (Groq Whisper and local
+  whisper.cpp).
+
+- dsh-talk (Apache-2.0) — PerryLink
+  https://github.com/PerryLink/dsh-talk
+  Reference for pointing the reader at user-supplied Piper voice models.
+
+- dsh-espanol (MIT)
+  Reference for registering an additional locale in the harness web UI.
+
+None of the above are affiliated with this project. Any code copied verbatim
+from an Apache-2.0 source retains its original notices in the file header.

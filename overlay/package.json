@@ -1,0 +1,13 @@
+{
+  "name": "dsh-kitt-voice-window",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Companion window that shows what DSH KITT is doing, on top of whatever you are using.",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "devDependencies": {
+    "electron": ">=28"
+  }
+}

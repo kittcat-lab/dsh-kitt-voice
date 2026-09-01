@@ -1,0 +1,9 @@
+# Three-language consistency record, following the convention the harness
+# itself uses (see @deepseek-ai/dsh-client-locale/README.i18n.yaml): the git
+# blob hash of each README side as of the last confirmed-consistent state.
+# The three languages carry equal authority; after editing any side, bring
+# the other two along and re-record with:
+#   git hash-object README.md README.es.md README.zh.md
+README.md: c7e2e8da0a90f5170710247d53c0a9ce1078820e
+README.es.md: 38ae0819cb9cc8db378520cc4662f19ba53c4f10
+README.zh.md: 6e815e640fb2e90fc48ccf09f8728127fedf6b67

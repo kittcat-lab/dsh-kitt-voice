@@ -1,0 +1,30 @@
+node_modules/
+dist/
+*.log
+
+# Voice engines and models are NEVER committed (hundreds of MB).
+voices/
+models/
+piper/
+*.onnx
+*.onnx.json
+*.wav
+*.exe
+
+# Secrets never belong in the tree. The transcription key is read from the
+# environment at call time and has no file of its own by design.
+.env
+.env.*
+*.pem
+*.key
+
+# pnpm writes this when a dependency asks to run a build script. Nothing here
+# needs one, so it is a leftover, not configuration.
+pnpm-workspace.yaml
+
+# A private brand never travels with a public repository. The window falls back
+# to the marks drawn in brand/marks.js when this is not here.
+overlay/brand/marks.*.js
+
+# Arranque personal de una maquina: rutas y puertos de aqui, no de nadie mas.
+overlay/abrir.local.cmd

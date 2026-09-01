@@ -1,0 +1,423 @@
+<!doctype html>
+<meta charset="utf-8">
+<!-- LO QUE ESTA VENTANA PUEDE CARGAR, Y NADA MÁS.
+     `file:` está aquí porque la ventana se abre desde el disco, y para un
+     documento cargado así `'self'` NO cubre sus propios archivos. Sin eso, la
+     declaración bloquea el código de la propia ventana y queda una barra que
+     se ve pero no hace nada: ni marca, ni botones, ni estado. Medido.
+     `connect-src 'none'` de verdad: esta página no hace ninguna llamada de
+     red. Todo lo que necesita del arnés lo pide su proceso principal por una
+     lista cerrada de rutas (requests.js), y esa llamada no es del navegador.
+     Escrito porque una ventana sin esto puede acabar trayéndose cualquier
+     cosa el día que alguien añada una etiqueta sin pensar, y esta ventana
+     vive siempre encima de todo. -->
+<meta http-equiv="Content-Security-Policy"
+      content="default-src 'none';
+               script-src 'self' file:;
+               style-src 'unsafe-inline';
+               img-src 'self' file: data:;
+               connect-src 'none';
+               font-src 'none'; object-src 'none'; frame-src 'none';
+               base-uri 'none'; form-action 'none'">
+<title>DSH KITT</title>
+<script src="brand/marks.js"></script>
+<!-- A private brand, if there is one. Missing is the normal case: the
+     window simply keeps the marks above. Loaded second so it wins.
+     No inline handler here: the declaration above forbids inline code, so an
+     onerror attribute would itself be refused and logged as an error. -->
+<script src="brand/marks.local.js"></script>
+<style>
+  html, body { margin: 0; height: 100%; background: transparent; overflow: hidden;
+    font-family: "Segoe UI", system-ui, sans-serif; user-select: none; cursor: default; }
+
+  /* THE WINDOW IS THE CONTROLS.
+     It used to be a badge with some small buttons tucked underneath, which
+     reads as a logo that happens to have controls. From a driving seat what
+     you need is the controls: big enough to hit without aiming, lit all the
+     time, and one colour telling you what it is doing. So the window is a bar,
+     the mark rides at the left of it carrying the state colour, and everything
+     else is a button.
+     The whole bar drags; only the controls are excluded. */
+  /* NOT -webkit-app-region: drag. A window that does not take focus never
+     receives the click that needs, so it did nothing at all. The bar is
+     dragged by following the pointer from the main process instead. */
+  /* Sized to what it IS, not to whatever the window happens to be. When the
+     menu opens the window grows, and a bar told to fill it turned into a
+     black slab the width of the screen with the buttons stranded at the far
+     end. Found the first time the menu was pressed. */
+  #stage { cursor: grab;
+    position: relative; width: 100%; height: 36px;
+    display: flex; align-items: center; justify-content: flex-start;
+    gap: 7px; padding: 0 9px; box-sizing: border-box;
+    background: rgba(13, 16, 19, .93);
+    border: 1px solid rgba(255,255,255,.13);
+    border-radius: 999px;
+    /* The bar carries the state colour, not just the mark. A halo on a
+       twenty-pixel badge is a hint; a halo on the whole bar is something you
+       cannot miss at a glance with a corner sat in front of you. */
+    box-shadow: 0 3px 14px rgba(0,0,0,.55);
+    transition: box-shadow .2s ease, border-color .2s ease; }
+
+  /* The halo is NOT a shape of its own. A circle drawn behind the mark forces
+     the mark to be round; a glow applied to the image traces its actual
+     silhouette, whatever it is. So the halo follows the logo — not the other
+     way round — and keeps working if the logo is replaced tomorrow.
+     At rest nothing glows: a companion that shines while nothing is happening
+     is a light left on. */
+
+  /* ── EL ESTADO LO CUENTA EL BORDE, Y NADA MÁS ──────────────────────────
+     Aquí hubo doce segmentos tipo caja de voz de KITT. Se quitaron el mismo
+     día que se probaron, y por la razón buena: DISTRAÍAN. Una ventana que vive
+     encima de lo que estás haciendo no puede tener nada que se mueva y te pida
+     la mirada — por muy bonito que sea el guiño.
+
+     Lo que queda hace el mismo trabajo sin robar atención: el borde de la
+     barra lleva el color del estado, y mientras te escucha crece con el nivel
+     medido de tu voz. Se lee de reojo y no hay que seguirlo con el ojo.
+
+     Si alguna vez vuelve, que sea como un segundo aspecto que se elige aparte,
+     no como el único. Y sabiendo que la primera vez sobró. */
+
+  /* Mientras piensa, el borde RESPIRA. Lento y sin cortes: un parpadeo que se
+     apaga de golpe es un aviso, y aquí no hay nada de qué avisar. Cuatro
+     segundos y medio de ida y vuelta, que a ese ritmo se nota sin mirar. */
+  #stage.pensando { animation: respirar 4.5s ease-in-out infinite; }
+  @keyframes respirar {
+    0%, 100% { filter: brightness(1); }
+    50%      { filter: brightness(1.45); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    #stage.pensando { animation: none; }
+  }
+
+  /* LA PALABRA «ERROR», que sustituye al color rojo de aviso.
+     Antes el rojo significaba «algo ha fallado», y eso obligaba a que el rojo
+     de KITT —que es su color al hablar— no se pudiera usar. Sacando el fallo a
+     una palabra escrita, el rojo vuelve a ser el suyo y el error se entiende
+     sin interpretar nada.
+     Monoespaciada del sistema con el espaciado abierto: da el aire de los
+     rótulos de la época sin traer un fichero de fuente. */
+  #say .texto.averia {
+    font-family: "Consolas", "DejaVu Sans Mono", ui-monospace, monospace;
+    font-weight: 700; letter-spacing: 2.5px; color: #ff5a4d;
+    text-shadow: 0 0 6px rgba(255,90,77,.75);
+    animation: parpadeo 1.1s steps(1, end) infinite;
+  }
+  @keyframes parpadeo { 0%, 60% { opacity: 1; } 61%, 100% { opacity: .25; } }
+  @media (prefers-reduced-motion: reduce) {
+    #say .texto.averia { animation: none; }
+  }
+
+  /* LA MARCA ES TAMBIÉN EL ENLACE. Quien instala el plugin ve cuál es y de un
+     clic llega a su sitio; y de paso, una barra sin marca no se distingue de
+     cualquier otra cosa flotando por la pantalla. El puntero lo dice: si algo
+     se puede pulsar, tiene que parecerlo. */
+  #mark { position: relative; height: auto; opacity: .85; flex: 0 0 auto;
+    cursor: pointer; -webkit-app-region: no-drag;
+    transition: opacity .25s ease, filter .22s ease;
+    filter: drop-shadow(0 2px 5px rgba(0,0,0,.5)); }
+  #mark:hover { opacity: 1; }
+
+  #web { flex: 0 0 auto; cursor: pointer; -webkit-app-region: no-drag;
+    font-size: 10px; letter-spacing: .2px; font-weight: 600;
+    color: #97a0a9; white-space: nowrap;
+    transition: color .15s ease; }
+  #web:hover { color: #ffffff; }
+  /* Con el menú abierto la barra no se ve, y la marca sobra. */
+  #stage.oculta #web { display: none; }
+  /* Y EN CUANTO PASA ALGO, LA MARCA SE APARTA.
+     Compartía sitio con el estado y se estorbaban: se leía «kittcat.com ando»,
+     con «Escuchando» cortado por la mitad. La marca ocupa el hueco sólo
+     mientras está libre; el estado es información y la marca es un anuncio, y
+     cuando los dos quieren el mismo sitio gana la información, siempre. */
+  #stage.talking #web { display: none; }
+
+  /* El pie del menú: el nombre y la web, sin gritar. Es un anuncio, y un
+     anuncio que molesta se aprende a no mirar. */
+  #marca { margin: 12px 0 0; padding-top: 10px; text-align: center;
+    border-top: 1px solid rgba(255,255,255,.08);
+    cursor: pointer; -webkit-app-region: no-drag;
+    display: flex; flex-direction: column; gap: 2px; }
+  #marca .nombre { font-size: 10px; letter-spacing: .6px;
+    text-transform: uppercase; color: #6e757d; }
+  #marca .web { font-size: 12px; font-weight: 600; letter-spacing: .2px;
+    color: #9aa0a6; transition: color .15s ease; }
+  /* LA K ES EL LOGOTIPO. Más grande que el resto de la palabra y en verde,
+     porque es la letra que se queda en la cabeza — la que va a acabar sola en
+     un icono el día que haga falta.
+
+     Verde APAGADO, no el de «escuchando». Con el vivo, la K era lo primero que
+     veías del menú entero y le robaba la mirada a los ajustes, que es a lo que
+     se viene. Un logotipo se ve; no se impone.
+
+     Y verde, no rojo: aquí el rojo significa otra cosa y no se le presta. */
+  #marca .web b { color: #5c9e6b; font-weight: 700;
+    font-size: 15px; line-height: 1; letter-spacing: 0; }
+  #marca:hover .web b { color: #79b887; }
+  #marca:hover .web { color: #ffffff; }
+  #marca:hover .nombre { color: #8b929a; }
+  #stage.symbol   #mark { width: 22px; max-height: 22px; object-fit: contain; }
+  #stage.wordmark #mark { width: 64px; max-height: 24px; object-fit: contain; }
+  #stage.awake #mark { opacity: 1; }
+
+  /* The word rides inside the bar, where the eye already is. It only appears
+     when there is something to say — a label that is always on is furniture. */
+  /* THE STATE, WRITTEN, AND READABLE.
+     It used to be cut off after the first word, which tells you nothing: half
+     of «Escuchando» and half of «Escribiendo» look the same. Now it has real
+     room, and when a message is longer than the room it slides across instead
+     of being chopped — a word you cannot finish reading is a word that is not
+     there. */
+  #say { flex: 1 1 auto; min-width: 0; overflow: hidden;
+    opacity: 0; transition: opacity .2s ease; }
+  #stage.talking #say { opacity: 1; }
+  #say .texto { display: inline-block; white-space: nowrap;
+    font-size: 11px; letter-spacing: .2px; font-weight: 500;
+    color: #e8eaed; text-shadow: 0 1px 3px rgba(0,0,0,.8); }
+  /* Only what does not fit moves. Something sliding for no reason is just
+     something to look at while you are trying to drive. */
+  #say .texto.rueda { animation: rodar 9s linear infinite; }
+  @keyframes rodar {
+    0%, 8%    { transform: translateX(0); }
+    92%, 100% { transform: translateX(var(--recorrido)); }
+  }
+
+  /* The controls are always there — a control you cannot see is a control you
+     do not know exists — but at rest they are small enough to ignore. Bringing
+     the pointer anywhere near the mark grows them to a size you can hit without
+     aiming, which matters when the other hand is on a wheel. */
+  /* Always readable. A control that only appears when the pointer arrives is a
+     control you have to discover, and this window is meant to be understood at
+     a glance from across a desk — or from a driving seat. So they are lit,
+     iconed and the same size all the time; hovering only brightens them. */
+  #tools { margin-left: auto; flex: 0 0 auto;
+    display: flex; justify-content: flex-end; align-items: center; gap: 3px; }
+
+  #stage:active { cursor: grabbing; }
+
+  button {
+    width: 24px; height: 24px; padding: 0;
+    display: inline-flex; align-items: center; justify-content: center;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,.20);
+    background: rgba(14,16,19,.82);
+    color: #cfd3d6;
+    cursor: pointer;
+    box-shadow: 0 0 5px rgba(0,0,0,.6);
+    transition: color .14s ease, background .14s ease, border-color .14s ease; }
+  button svg { width: 8.5px; height: 8.5px; display: block; }
+  button:hover { color: #ffffff; background: rgba(38,42,47,.96);
+    border-color: rgba(255,255,255,.45); }
+
+  /* A COLOUR EACH, so which button is which is answered before you have
+     read anything. Colour is free and reading is not, and this is looked at
+     from a driving seat. These are the buttons' identity and they never
+     change; what the thing is DOING is the bar's own outline, which is a
+     different question and has its own three colours. */
+  /* Cada mando lleva su color escrito aquí, y el resto de las reglas sólo se
+     refieren a la variable. Así hay UN sitio donde cambiar un color, y así el
+     modo sobrio de abajo se resuelve con tres líneas en vez de reescribirlo
+     todo. */
+  #turn { --tinta: #ff6b5e; --fuerte: #ff8a80; --dado: #c8372c; --fondo: rgba(50,20,18,.96); }
+  #talk { --tinta: #5aa2ff; --fuerte: #86bcff; --dado: #1f5fc4; --fondo: rgba(16,30,52,.96); }
+  #micmute { --tinta: #ffb020; --fuerte: #ffd27a; --dado: #a86c00; --fondo: rgba(48,34,6,.96); }
+  #speak { --tinta: #cfd3d6; --fuerte: #ffffff; --dado: #3a4046; --fondo: rgba(38,42,47,.96); }
+  #menu { --tinta: #cfd3d6; --fuerte: #ffffff; --dado: #3a4046; --fondo: rgba(38,42,47,.96); }
+  #quit { --tinta: #cfd3d6; --fuerte: #ffffff; --dado: #3a4046; --fondo: rgba(38,42,47,.96); }
+
+  /* MODO SOBRIO: todos en blanco.
+     El color de cada mando ayuda a saber cuál es sin leer, pero hay quien
+     quiere una barra que no cante nada encima de lo suyo. Con esto los cuatro
+     se ven iguales y en blanco, y lo único que sigue teniendo color es el borde
+     —el estado—, porque eso no es adorno: es información. */
+  #stage.sobrio #turn, #stage.sobrio #talk, #stage.sobrio #micmute, #stage.sobrio #speak,
+  #stage.sobrio #menu, #stage.sobrio #quit {
+    --tinta: #cfd3d6; --fuerte: #ffffff; --dado: #3a4046; --fondo: rgba(38,42,47,.96);
+  }
+
+  button { color: var(--tinta, #cfd3d6); border-color: color-mix(in srgb, var(--tinta, #cfd3d6) 55%, transparent); }
+  button:hover { color: var(--fuerte, #fff); background: var(--fondo, rgba(38,42,47,.96));
+    border-color: color-mix(in srgb, var(--tinta, #cfd3d6) 85%, transparent); }
+
+  /* ENCENDIDOS mientras hacen algo. Un interruptor que no dice si está dado no
+     es un interruptor: es un botón que pulsas a ver qué pasa. */
+  #stage.grabando #turn, #stage.enmarcha #talk, #stage.silenciado #micmute,
+  #stage.leyendo #speak {
+    color: #fff; background: var(--dado);
+    border-color: var(--fuerte);
+    box-shadow: 0 0 8px color-mix(in srgb, var(--tinta) 70%, transparent); }
+
+
+
+  /* The key panel. Only on screen while it is being used, and it takes the
+     whole window so nothing else can be clicked by accident. */
+  #stage.oculta { display: none; }
+  #panel { cursor: grab;
+    position: absolute; inset: 0; padding: 10px 12px;
+    background: rgba(12, 14, 16, .96); border: 1px solid rgba(255,255,255,.16);
+    border-radius: 12px; color: #e8eaed; font-size: 12px; }
+  #panel[hidden] { display: none; }
+  #panel h1 { margin: 0 0 2px; font-size: 12px; font-weight: 600; }
+  #panel .hint { margin: 0 0 6px; font-size: 10px; color: #9aa0a6; line-height: 1.35; }
+  #panel h1.sep { margin-top: 12px; padding-top: 10px;
+    border-top: 1px solid rgba(255,255,255,.10); }
+  #acciones { display: flex; gap: 5px; margin: 8px 0 6px;
+    padding-top: 9px; border-top: 1px solid rgba(255,255,255,.10); }
+  #acciones button { -webkit-app-region: no-drag; flex: 1 1 0; width: auto; height: 24px;
+    border-radius: 7px; font-size: 11px; }
+  #sonido { display: flex; flex-direction: column; gap: 5px; margin-bottom: 4px; }
+  .campo { -webkit-app-region: no-drag; display: flex; align-items: center; gap: 8px; }
+  .campo > span { flex: 0 0 62px; font-size: 10px; color: #9aa0a6; }
+  /* COLORES SÓLIDOS, no translúcidos.
+     La lista que se despliega no la dibuja esta página: la dibuja el sistema,
+     y se lleva los colores del select tal cual. Con un fondo a medias
+     transparente, los nombres salen lavados y sólo se lee el que está
+     señalado — que es exactamente lo que pasaba. Aquí no vale nada con alfa,
+     y las opciones y sus títulos llevan su color escrito. */
+  .campo select { -webkit-app-region: no-drag; flex: 1 1 auto; min-width: 0;
+    height: 22px; padding: 0 6px; border-radius: 6px;
+    border: 1px solid rgba(255,255,255,.18);
+    background: #23282d; color: #f2f4f6; font-size: 11px; }
+  .campo select option { background: #1b1f24; color: #f2f4f6; padding: 2px 4px; }
+  .campo select optgroup { background: #14181c; color: #9fd0ff;
+    font-style: normal; font-weight: 600; }
+  .campo select option:checked { background: #2f6fd0; color: #ffffff; }
+  .row { -webkit-app-region: no-drag;
+    display: flex; align-items: center; gap: 8px; margin-bottom: 5px; }
+  .row .what { flex: 1 1 auto; font-size: 11px; }
+  .row .key { flex: 0 0 auto; min-width: 92px; padding: 4px 8px;
+    border-radius: 6px; border: 1px solid rgba(255,255,255,.22);
+    background: rgba(139,148,158,.10); color: #e8eaed;
+    font-size: 11px; cursor: pointer; text-align: center; }
+  .row .key.waiting { border-color: #ff8a3d; color: #ff8a3d; }
+  #problem { margin: 6px 0 0; font-size: 10px; color: #f5c76e; min-height: 24px; line-height: 1.3; }
+  .wide { -webkit-app-region: no-drag; width: 100%; height: 24px;
+    border-radius: 7px; border: 1px solid rgba(255,255,255,.22);
+    background: rgba(139,148,158,.12); color: #e8eaed; font-size: 11px; cursor: pointer; }
+</style>
+
+<div id="stage" class="symbol">
+  <img id="mark" alt="DSH KITT" role="button" tabindex="0">
+  <!-- LA WEB, A LA IZQUIERDA DEL TODO Y SIEMPRE VISIBLE.
+       Esto se regala, así que lo justo es que se vea de dónde sale. Va pegada
+       a la marca, apagadita, y se enciende al pasar por encima: quien no la
+       busca no la ve, y quien la mira la encuentra a la primera. -->
+  <span id="web" role="button" tabindex="0">kittcat.com</span>
+  <div id="say"></div>
+  <div id="tools">
+    <!-- FOUR. Not six.
+         Every control on a window that lives over another application costs
+         attention you are spending on whatever you are doing. The two things
+         you actually reach for are a circle each, everything occasional lives
+         behind the gear — and closing got its own circle the first day the
+         bar was used, because leaving should never need two presses. -->
+
+    <!-- One press, one turn: speak, press again, it sends and reads the reply. -->
+    <button id="turn" title="Hablar y enviar · Speak and send" aria-label="Hablar y enviar">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+           stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M12 3a3 3 0 0 1 3 3v5a3 3 0 0 1-6 0V6a3 3 0 0 1 3-3z"/>
+        <path d="M5 11a7 7 0 0 0 14 0M12 18v3"/>
+      </svg>
+    </button>
+
+    <!-- The open call: it stays listening, answers, listens again, until you
+         stop it. Two bubbles, because that is what a conversation looks like. -->
+    <button id="talk" title="Conversación · Conversation" aria-label="Conversación">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+           stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M8 13H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+        <path d="M10 10h9a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-3l-3 3v-3h-3a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2z"/>
+      </svg>
+    </button>
+
+    <!-- SILENCIAR EL MICRÓFONO. Aquí y no sólo en la página, porque hace falta
+         justo cuando NO estás mirando la página: entra alguien a hablarte, o
+         pones un vídeo, y no quieres saltar a otra ventana para taparle el
+         oído. El micrófono tachado es la señal que todo el mundo conoce. -->
+    <button id="micmute" title="Silenciar el microfono" aria-label="Silenciar el microfono">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+           stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M12 3a3 3 0 0 1 3 3v5a3 3 0 0 1-6 0V6a3 3 0 0 1 3-3z"/>
+        <path d="M5 11a7 7 0 0 0 14 0M12 18v3"/>
+        <path d="M4 4l16 16"/>
+      </svg>
+    </button>
+
+    <!-- VOLVER A ESCUCHAR LA RESPUESTA. Aquí y no sólo en la página, y por la
+         razón de ser de esta ventana: si estabas en otra cosa y se te ha
+         escapado lo que dijo, es justo aquí donde lo vas a querer repetir, sin
+         saltar a ninguna parte. -->
+    <button id="speak" title="Leer los mensajes" aria-label="Leer los mensajes">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+           stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M11 5 6 9H3v6h3l5 4V5z"/>
+        <path d="M15.5 8.5a5 5 0 0 1 0 7"/>
+      </svg>
+    </button>
+
+    <!-- Everything else that is not everyday. -->
+    <button id="menu" title="Menú · Menu" aria-label="Menú">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"
+           stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="3.1"/>
+        <path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1 1.56V21a2 2 0 1 1-4 0v-.09a1.7 1.7 0 0 0-1.11-1.56 1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.7 1.7 0 0 0 .34-1.87 1.7 1.7 0 0 0-1.56-1H3a2 2 0 1 1 0-4h.09A1.7 1.7 0 0 0 4.65 8.6a1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.7 1.7 0 0 0 1.87.34H9a1.7 1.7 0 0 0 1-1.56V3a2 2 0 1 1 4 0v.09a1.7 1.7 0 0 0 1 1.56 1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.7 1.7 0 0 0-.34 1.87V9a1.7 1.7 0 0 0 1.56 1H21a2 2 0 1 1 0 4h-.09a1.7 1.7 0 0 0-1.56 1z"/>
+      </svg>
+    </button>
+
+    <!-- The fourth circle, and it earned its place the first day someone
+         used the bar: closing lived behind the menu, and leaving should
+         never need two presses. Neutral grey on purpose — colour means
+         something here, and closing is not an alarm. -->
+    <button id="quit" title="Cerrar · Close" aria-label="Cerrar">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+           stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M6 6l12 12M18 6L6 18"/>
+      </svg>
+    </button>
+  </div>
+</div>
+
+<div id="panel" hidden>
+  <!-- ONE panel, in the order you use it: what comes out of where, then the
+       keys you press, then the three things you do once in a blue moon. The
+       last three are a row and not three stacked buttons, because a menu that
+       does not fit its own window is not a menu. Measured: stacked, this
+       needed 467 pixels in a 320 pixel window and cut its own «Listo» off. -->
+  <h1 data-txt="soundTitle">Sonido</h1>
+  <div id="sonido">
+    <label class="campo"><span data-txt="micLabel">Micrófono</span><select id="mic"></select></label>
+    <label class="campo"><span data-txt="outLabel">Altavoz</span><select id="out"></select></label>
+    <label class="campo"><span data-txt="voiceLabel">Voz</span><select id="voice"></select></label>
+    <!-- Una lista y no un deslizador: un deslizador en una ventana de 26
+         píxeles de alto es un mando que no se acierta, y aquí los valores
+         útiles son cuatro o cinco, no un continuo. -->
+    <label class="campo"><span data-txt="rateLabel">Velocidad</span><select id="rate"></select></label>
+    <label class="campo"><span data-txt="langLabel">Idioma</span><select id="uilang"></select></label>
+    <label class="campo"><span data-txt="colorLabel">Botones</span><select id="paleta"></select></label>
+  </div>
+
+  <h1 class="sep" data-txt="keysTitle">Teclas</h1>
+  <p class="hint" data-txt="keysHint">Funcionan aunque estés en otra aplicación. Mapea un botón del volante a la tecla que elijas.</p>
+  <div id="rows"></div>
+  <p id="problem"></p>
+
+  <div id="acciones">
+    <button id="mute" data-txt="mute">Callar</button>
+    <button id="shape" data-txt="shape">Forma</button>
+    <button id="close" data-txt="close">Cerrar</button>
+  </div>
+  <button id="done" class="wide" data-txt="done">Listo</button>
+  <!-- El anuncio, donde no estorba: quien abre el menu ya esta mirando. -->
+  <!-- EL PIE DE LA CASA. Se regala el plugin, asi que lo justo es que se vea
+       de donde sale — y quien lo instala agradece saber que quedo bien puesto.
+       Discreto y con su sitio propio: un anuncio que estorba se aprende a no
+       mirar, y este tiene que aguantar meses en la misma pantalla. -->
+  <div id="marca">
+    <span class="nombre">DSH KITT</span>
+    <span class="web"><b>k</b>ittcat.com</span>
+  </div>
+</div>
+
+<script src="textos.js"></script>
+<script src="app.js"></script>
