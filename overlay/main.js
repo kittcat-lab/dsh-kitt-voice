@@ -50,10 +50,15 @@ const SHAPES = {
 /** The window grows to this while the keys are being assigned. */
 // Taller than before: the menu now holds the actions that used to be
 // circles of their own.
-// Measured, not guessed: with the speed control the panel asks for 455 pixels
-// of content. A window sized to the exact number is a window that clips itself
-// the day a font renders one pixel taller, so it gets room.
-const PANEL = { width: 300, height: 628 };
+// Medido, no supuesto: el contenido pide 523 pixeles en espanol e ingles y 511
+// en chino. Una ventana del tamano exacto se recorta el dia que una letra se
+// dibuje un pixel mas alta, asi que se le deja aire.
+// Y HAY UN LIMITE POR ARRIBA. En una pantalla al 150% cada uno de estos
+// pixeles son uno y medio de verdad: con 628 el menu media 942 fisicos, no
+// cabia de alto, y se abria con el boton Listo fuera de la pantalla. Lo que se
+// anada aqui se mide contra la pantalla mas pequena, no contra la de quien lo
+// escribe.
+const PANEL = { width: 300, height: 536 };
 const DEFAULT_SHAPE = 'symbol';
 
 /**
@@ -128,6 +133,9 @@ function safePosition(saved, size) {
 }
 
 let win = null;
+/** Donde estaba la barra antes de abrir el menu, para devolverla ahi al
+ *  cerrarlo. El menu puede haberse tenido que apartar de un borde. */
+let posicionDeLaBarra = null;
 
 /** Where the window is, and NOTHING about how big it is. A size stored here
  *  comes back on the next start and makes a wrong size permanent. */
@@ -148,6 +156,11 @@ function createWindow() {
     height: size.height,
     x: pos.x,
     y: pos.y,
+    // El logotipo, para donde Windows pida uno: el conmutador de ventanas, el
+    // administrador de tareas y la barra de tareas si alguien quita el
+    // `skipTaskbar` de abajo. Sin esto sale el icono genérico de Electron, que
+    // le pone a este producto la cara de otro.
+    icon: path.join(__dirname, 'brand', 'icon.png'),
     // The recipe already proven to float over a fullscreen sim on this machine:
     // no frame, real transparency, no shadow, always on top.
     frame: false,
@@ -274,7 +287,38 @@ ipcMain.handle('overlay:capture-mode', (_event, open) => {
   const shape = SHAPES[settings.shape] ? settings.shape : DEFAULT_SHAPE;
   const size = open ? PANEL : SHAPES[shape];
   const here = win.getBounds();
-  win.setBounds({ x: here.x, y: here.y, width: size.width, height: size.height });
+
+  /* EL MENÚ NO SE SALE DE LA PANTALLA.
+   *
+   * La barra vive donde la dejes, y muy a menudo eso es abajo del todo. Al
+   * abrir el menú la ventana crece hacia abajo desde ese mismo punto, así que
+   * el panel se iba por debajo del borde y quedaba medio menú inalcanzable —
+   * con el botón de «Listo» entre lo que no se veía, que es la peor mitad que
+   * puedes perder.
+   *
+   * Así que al crecer se sube lo justo para que quepa, y al encoger se vuelve
+   * a donde estaba. La barra no se te mueve del sitio: sólo el menú se aparta
+   * de los bordes mientras está abierto.
+   *
+   * Se mira la pantalla en la que ESTÁ la ventana, no la principal: con dos
+   * monitores de distinto tamaño, calcular contra el principal deja el menú
+   * fuera en el otro. */
+  let x = here.x;
+  let y = here.y;
+  if (open) {
+    posicionDeLaBarra = { x: here.x, y: here.y };
+    const zona = screen.getDisplayMatching(here).workArea;
+    if (y + size.height > zona.y + zona.height) y = zona.y + zona.height - size.height - 8;
+    if (y < zona.y) y = zona.y + 8;
+    if (x + size.width > zona.x + zona.width) x = zona.x + zona.width - size.width - 8;
+    if (x < zona.x) x = zona.x + 8;
+  } else if (posicionDeLaBarra) {
+    x = posicionDeLaBarra.x;
+    y = posicionDeLaBarra.y;
+    posicionDeLaBarra = null;
+  }
+
+  win.setBounds({ x, y, width: size.width, height: size.height });
   win.setFocusable(Boolean(open));
   if (open) win.focus();
   else {

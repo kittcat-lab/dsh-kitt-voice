@@ -28,3 +28,12 @@ overlay/brand/marks.*.js
 
 # Arranque personal de una maquina: rutas y puertos de aqui, no de nadie mas.
 overlay/abrir.local.cmd
+
+# La documentacion interna se queda en el disco de quien trabaja, no en el
+# repositorio. Son encargos, relevos y prompts: llevan rutas de una maquina y
+# el nombre de quien los escribio, y a quien entre a mirar el repositorio no
+# le aportan nada. La UNICA que si es publica es la de las trampas pagadas:
+# esa cuenta fallos reales con su sintoma y le sirve a cualquiera que toque
+# esto, asi que se salva a mano.
+DOCUMENTACION/*
+!DOCUMENTACION/TRAMPAS_PAGADAS.md

@@ -105,6 +105,21 @@ dsh plugin --profile web add link:/absolute/path/to/dsh-kitt-voice
 
 If your harness runs a different profile name, replace `web` with it.
 
+### About the warning your package manager prints
+
+Installing prints a line saying one dependency has install scripts that were
+not run — `msedge-tts`, whose `preinstall` is `npx only-allow pnpm`.
+
+**Nothing is missing, and nothing needs approving.** That script builds nothing:
+it is a guard the library uses to make its own contributors work with pnpm, and
+it *fails* under npm on purpose. Your package manager skipping it is the correct
+outcome; approving it would break the install instead of fixing it. The library
+ships compiled JavaScript and has no native code.
+
+Measured on a clean machine: a fresh `npm install` exits 0, lists 322 voices
+from the service and returns real audio, with no build step and no local voices
+installed.
+
 ## Configure
 
 Everything except the transcription key lives in **Settings → Plugins →

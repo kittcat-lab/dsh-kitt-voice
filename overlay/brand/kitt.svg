@@ -1,0 +1,4 @@
+<!-- El logotipo, tal cual. Fuente de verdad de la marca: de aquí sale el icono
+     de la ventana (icon.png) y de aquí se copia el trazado a marks.js. Si el
+     logotipo cambia, cambia aquí primero. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 28 28"><path d="M4 3h5v8.1L17.1 3H24l-8.7 10L24.5 25h-7.1L9 15.3V25H4V3Z" fill="#b7ff54"/></svg>

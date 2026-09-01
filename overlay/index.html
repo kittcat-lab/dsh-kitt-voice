@@ -134,7 +134,7 @@
 
   /* El pie del menú: el nombre y la web, sin gritar. Es un anuncio, y un
      anuncio que molesta se aprende a no mirar. */
-  #marca { margin: 12px 0 0; padding-top: 10px; text-align: center;
+  #marca { margin: 8px 0 0; padding-top: 7px; text-align: center;
     border-top: 1px solid rgba(255,255,255,.08);
     cursor: pointer; -webkit-app-region: no-drag;
     display: flex; flex-direction: column; gap: 2px; }
@@ -253,19 +253,19 @@
      whole window so nothing else can be clicked by accident. */
   #stage.oculta { display: none; }
   #panel { cursor: grab;
-    position: absolute; inset: 0; padding: 10px 12px;
+    position: absolute; inset: 0; padding: 8px 11px;
     background: rgba(12, 14, 16, .96); border: 1px solid rgba(255,255,255,.16);
     border-radius: 12px; color: #e8eaed; font-size: 12px; }
   #panel[hidden] { display: none; }
-  #panel h1 { margin: 0 0 2px; font-size: 12px; font-weight: 600; }
-  #panel .hint { margin: 0 0 6px; font-size: 10px; color: #9aa0a6; line-height: 1.35; }
-  #panel h1.sep { margin-top: 12px; padding-top: 10px;
+  #panel h1 { margin: 0 0 1px; font-size: 11px; font-weight: 600; }
+  #panel .hint { margin: 0 0 4px; font-size: 9px; color: #9aa0a6; line-height: 1.3; }
+  #panel h1.sep { margin-top: 8px; padding-top: 7px;
     border-top: 1px solid rgba(255,255,255,.10); }
-  #acciones { display: flex; gap: 5px; margin: 8px 0 6px;
-    padding-top: 9px; border-top: 1px solid rgba(255,255,255,.10); }
+  #acciones { display: flex; gap: 5px; margin: 6px 0 4px;
+    padding-top: 7px; border-top: 1px solid rgba(255,255,255,.10); }
   #acciones button { -webkit-app-region: no-drag; flex: 1 1 0; width: auto; height: 24px;
     border-radius: 7px; font-size: 11px; }
-  #sonido { display: flex; flex-direction: column; gap: 5px; margin-bottom: 4px; }
+  #sonido { display: flex; flex-direction: column; gap: 3px; margin-bottom: 2px; }
   .campo { -webkit-app-region: no-drag; display: flex; align-items: center; gap: 8px; }
   .campo > span { flex: 0 0 62px; font-size: 10px; color: #9aa0a6; }
   /* COLORES SÓLIDOS, no translúcidos.
@@ -275,7 +275,7 @@
      señalado — que es exactamente lo que pasaba. Aquí no vale nada con alfa,
      y las opciones y sus títulos llevan su color escrito. */
   .campo select { -webkit-app-region: no-drag; flex: 1 1 auto; min-width: 0;
-    height: 22px; padding: 0 6px; border-radius: 6px;
+    height: 20px; padding: 0 6px; border-radius: 6px;
     border: 1px solid rgba(255,255,255,.18);
     background: #23282d; color: #f2f4f6; font-size: 11px; }
   .campo select option { background: #1b1f24; color: #f2f4f6; padding: 2px 4px; }
@@ -283,14 +283,14 @@
     font-style: normal; font-weight: 600; }
   .campo select option:checked { background: #2f6fd0; color: #ffffff; }
   .row { -webkit-app-region: no-drag;
-    display: flex; align-items: center; gap: 8px; margin-bottom: 5px; }
+    display: flex; align-items: center; gap: 8px; margin-bottom: 3px; }
   .row .what { flex: 1 1 auto; font-size: 11px; }
-  .row .key { flex: 0 0 auto; min-width: 92px; padding: 4px 8px;
+  .row .key { flex: 0 0 auto; min-width: 88px; padding: 2px 8px;
     border-radius: 6px; border: 1px solid rgba(255,255,255,.22);
     background: rgba(139,148,158,.10); color: #e8eaed;
     font-size: 11px; cursor: pointer; text-align: center; }
   .row .key.waiting { border-color: #ff8a3d; color: #ff8a3d; }
-  #problem { margin: 6px 0 0; font-size: 10px; color: #f5c76e; min-height: 24px; line-height: 1.3; }
+  #problem { margin: 4px 0 0; font-size: 9px; color: #f5c76e; min-height: 16px; line-height: 1.25; }
   .wide { -webkit-app-region: no-drag; width: 100%; height: 24px;
     border-radius: 7px; border: 1px solid rgba(255,255,255,.22);
     background: rgba(139,148,158,.12); color: #e8eaed; font-size: 11px; cursor: pointer; }

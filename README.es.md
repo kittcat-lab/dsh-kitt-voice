@@ -106,6 +106,22 @@ dsh plugin --profile web add link:/ruta/absoluta/a/dsh-kitt-voice
 
 Si tu arnés usa otro nombre de perfil, cambia `web` por el tuyo.
 
+### Sobre el aviso que imprime tu gestor de paquetes
+
+Al instalar aparece una lÃ­nea diciendo que una dependencia tiene scripts de
+instalaciÃ³n que no se han ejecutado: `msedge-tts`, cuyo `preinstall` es
+`npx only-allow pnpm`.
+
+**No falta nada y no hay que aprobar nada.** Ese script no construye nada: es un
+cerrojo que la librerÃ­a usa para obligar a sus propios colaboradores a trabajar
+con pnpm, y bajo npm falla a propÃ³sito. Que tu gestor lo salte es el resultado
+correcto; aprobarlo romperÃ­a la instalaciÃ³n en vez de arreglarla. La librerÃ­a se
+publica con el JavaScript ya compilado y no tiene cÃ³digo nativo.
+
+Medido en una mÃ¡quina limpia: un `npm install` reciÃ©n hecho termina en 0, lista
+322 voces del servicio y devuelve audio de verdad, sin ningÃºn paso de
+construcciÃ³n y sin voces locales instaladas.
+
 ## Configuración
 
 Todo menos la clave de transcripción está en **Ajustes → Plugins → dsh-kitt-voice**:
