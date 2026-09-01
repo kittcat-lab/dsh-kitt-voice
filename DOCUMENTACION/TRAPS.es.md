@@ -1,5 +1,7 @@
 # Las trampas ya pagadas
 
+*[English](TRAPS.md) | [简体中文](TRAPS.zh.md)*
+
 Dieciséis fallos que costaron una tarde entera cada uno. **Todos salieron
 USÁNDOLO, ninguno leyendo el código, y ninguno daba un error** — por eso están
 escritos: son justo los que no se encuentran mirando.

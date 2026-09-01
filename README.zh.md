@@ -179,6 +179,12 @@ npm test
 - **用语音打断。** 用耳机可行——麦克风听不到回复。用开放式扬声器则不行。
 - **Windows 以外的一切。** 这里没有任何 Windows 专属的东西——语音、窗口和快捷键都有对应方案——但它只在 Windows 上运行过。欢迎报告。
 
+## 已经付过代价的陷阱
+
+十六个各花掉一整个下午的问题，连同它们的症状一并写下：
+[已经付过代价的陷阱](DOCUMENTACION/TRAPS.zh.md)。它们全都是在使用中暴露的，
+而不是靠读代码发现的，而且没有一个报错。动到哪一部分之前，先读属于它的那一条。
+
 ## 许可证
 
 MIT——见 [LICENSE](LICENSE)。参考过的既有项目在 [NOTICE](NOTICE) 中致谢。如何参与：[CONTRIBUTING.md](CONTRIBUTING.md)。变更记录：[CHANGELOG.md](CHANGELOG.md)。

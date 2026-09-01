@@ -310,6 +310,13 @@ read-aloud sentence splitter and the speed steps.
   window and the keys all have their equivalents — but it has only ever been
   run on Windows. Reports welcome.
 
+## Traps already paid for
+
+Sixteen bugs that each cost an afternoon, written down with their symptoms:
+[Traps already paid for](DOCUMENTACION/TRAPS.md). Every one of them turned up by
+using the thing rather than by reading the code, and not one raised an error.
+Read the relevant one before touching the part it belongs to.
+
 ## Licence
 
 MIT — see [LICENSE](LICENSE). Prior art and acknowledgements are in

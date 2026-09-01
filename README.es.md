@@ -324,6 +324,13 @@ de la lectura y los pasos de velocidad.
   Windows —las voces, la ventana y las teclas tienen su equivalente— pero sólo
   se ha usado en Windows. Se agradecen informes.
 
+## Las trampas ya pagadas
+
+Dieciséis fallos que costaron una tarde cada uno, escritos con su síntoma:
+[Las trampas ya pagadas](DOCUMENTACION/TRAPS.es.md). Todos salieron usándolo y
+no leyendo el código, y ninguno daba un error. Antes de tocar la parte que le
+toca a cada uno, se lee la suya.
+
 ## Licencia
 
 MIT — ver [LICENSE](LICENSE). Los proyectos previos consultados están

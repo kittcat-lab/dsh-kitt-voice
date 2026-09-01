@@ -36,4 +36,6 @@ overlay/abrir.local.cmd
 # esa cuenta fallos reales con su sintoma y le sirve a cualquiera que toque
 # esto, asi que se salva a mano.
 DOCUMENTACION/*
-!DOCUMENTACION/TRAMPAS_PAGADAS.md
+!DOCUMENTACION/TRAPS.md
+!DOCUMENTACION/TRAPS.es.md
+!DOCUMENTACION/TRAPS.zh.md
