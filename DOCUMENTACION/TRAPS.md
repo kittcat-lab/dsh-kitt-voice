@@ -124,16 +124,40 @@ the README says what is true today.
 It stays written here as a reminder of the other thing: **a trap expires too**,
 and repeating one that no longer happens is as bad as never having written it.
 
-## One that frightens without biting
+## One that frightens under npm and bites under pnpm
 
-**"A package has install scripts that were not run" does not always mean
-something is missing.** The warning on install comes from `msedge-tts`, whose
-`preinstall` is `npx only-allow pnpm`: it builds nothing, it is a latch the
-library uses to force *its own* contributors onto pnpm, and under npm it **fails
-on purpose**. So skipping it is not merely harmless — it is correct. Approving
-it would break the install rather than fix it.
+**"A package has install scripts that were not run" is a warning under npm and
+an error under pnpm.** The script is `msedge-tts`'s `preinstall`,
+`npx only-allow pnpm`: it builds nothing, it is a latch forcing *its own*
+contributors onto pnpm, and elsewhere it fails on purpose. Skipping it is not
+merely harmless — it is correct.
 
-It was measured before being written down, which is the point: clean install,
-`npm install` exits 0, the library lists 322 voices and returns real audio, with
-nothing built and not a single local voice installed. **A warning is not a bug —
-but neither is it dismissed with "it's probably fine": you check.**
+Under npm that is the end of it: measured on a clean machine, `npm install`
+exits 0, the library lists 322 voices and returns real audio, with nothing built
+and no local voices installed.
+
+**Under pnpm — which is what a harness profile uses — the same situation fails
+the whole command** with `[ERR_PNPM_IGNORED_BUILDS]`. And pnpm does not decide
+for you: it writes `msedge-tts: set this to true or false` into the profile's
+`pnpm-workspace.yaml` and leaves it there. Until somebody decides, **every**
+install in that profile fails — including other people's plugins, so the next
+person to hit it has no reason to suspect this one. Set it to `false`.
+
+Found by installing an unrelated plugin into a profile that already had this
+one. **A warning in one package manager is not a warning in the next: the same
+situation has to be measured in the one people will actually use.**
+
+## The one I wrote down and then walked into anyway
+
+**Reading a UTF-8 file without saying so re-encodes it, and nothing complains.**
+A file was read with a tool that defaults to the system codepage, edited, and
+written back as UTF-8. The Chinese in it became double-encoded — a wall of
+`å…³äºŽ` where the text used to be. No error, no failed command; it simply
+shipped, and it was found later by a search that could no longer match its own
+heading.
+
+The trap about corrupted settings files was already written three sections
+above. Having it written is not the same as reading it. **After touching any
+file with accents or non-Latin script, read it back and check** — and if the
+check can be a line of code rather than a pair of eyes, make it one.
+

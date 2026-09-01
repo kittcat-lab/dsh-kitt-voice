@@ -114,19 +114,43 @@ vuelve a aparecer, es una regresión y pesa más que un hallazgo nuevo.
   aparato de por defecto. Al tocar un fichero con acentos, se comprueba
   después leyéndolo.
 
-## Y una que asusta sin morder
+## Y una que asusta con npm pero muerde con pnpm
 
-**«Un paquete tiene scripts de instalación que no se han ejecutado» no siempre
-significa que falte algo.** El aviso que sale al instalar es por `msedge-tts`, y
-su `preinstall` es `npx only-allow pnpm`: no construye nada, es un cerrojo para
-obligar a *sus* colaboradores a usar pnpm, y bajo npm **falla a propósito**. O
-sea que saltárselo no es que sea inofensivo — es que es lo correcto: aprobarlo
-rompe la instalación en vez de arreglarla.
+**«Un paquete tiene scripts de instalación que no se han ejecutado» es un aviso
+con npm y un error con pnpm.** El script es el `preinstall` de `msedge-tts`,
+`npx only-allow pnpm`: no construye nada, es un cerrojo para obligar a *sus*
+colaboradores a usar pnpm, y fuera de ahí falla a propósito. Saltárselo no es
+que sea inofensivo — es que es lo correcto.
 
-Se midió antes de escribirlo, que es la gracia: instalación limpia, `npm
-install` termina en 0, la librería lista 322 voces y devuelve audio de verdad,
-sin construir nada y sin una sola voz local instalada. **Un aviso no es un
-fallo, pero tampoco se despacha con un «seguro que no pasa nada»: se comprueba.**
+Con npm ahí se acaba: medido en limpio, `npm install` termina en 0, la librería
+lista 322 voces y devuelve audio de verdad, sin construir nada y sin una sola
+voz local instalada.
+
+**Con pnpm —que es lo que usa un perfil del arnés— esa misma situación tumba el
+comando entero** con `[ERR_PNPM_IGNORED_BUILDS]`. Y pnpm no decide por ti: te
+escribe `msedge-tts: set this to true or false` en el `pnpm-workspace.yaml` del
+perfil y lo deja ahí. Mientras nadie decida, falla **cualquier** instalación en
+ese perfil —también la de plugins de otra gente—, así que el siguiente que se lo
+coma no tiene motivo para sospechar de éste. Se pone en `false`.
+
+Salió instalando un plugin que no tenía nada que ver en un perfil que ya tenía
+éste. **Un aviso en un gestor de paquetes no es un aviso en el siguiente: la
+misma situación hay que medirla en el que va a usar la gente.**
+
+## Y la que tenía escrita y me comí igual
+
+**Leer un fichero UTF-8 sin decir que lo es lo vuelve a codificar, y no protesta
+nadie.** Se leyó con una herramienta que por defecto usa la codificación del
+sistema, se editó, y se guardó como UTF-8. El chino que había dentro quedó
+codificado dos veces — un muro de `å…³äºŽ` donde antes había texto. Ni un error
+ni un comando fallido: se publicó tal cual, y se encontró después porque una
+búsqueda ya no casaba con su propia cabecera.
+
+La trampa de los ficheros que se corrompen al reescribirlos estaba escrita tres
+secciones más arriba. Tenerla escrita no es lo mismo que leerla. **Después de
+tocar cualquier fichero con tildes o con alfabeto no latino, se vuelve a leer y
+se comprueba** — y si la comprobación puede ser una línea de código en vez de un
+par de ojos, que lo sea.
 
 ## Y una que dejó de ser verdad
 

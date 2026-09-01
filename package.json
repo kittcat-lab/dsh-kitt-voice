@@ -79,6 +79,6 @@
     "react": "^18.2.0"
   },
   "scripts": {
-    "test": "node --test test/guard.test.js test/speak.test.js test/chunk.test.js test/lastfromlog.test.js test/frases.test.js test/requests.test.js test/paraleer.test.js test/velocidad.test.js"
+    "test": "node --test test/guard.test.js test/speak.test.js test/chunk.test.js test/lastfromlog.test.js test/frases.test.js test/requests.test.js test/paraleer.test.js test/velocidad.test.js test/documentos.test.js"
   }
 }

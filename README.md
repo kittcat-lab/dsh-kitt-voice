@@ -107,18 +107,43 @@ If your harness runs a different profile name, replace `web` with it.
 
 ### About the warning your package manager prints
 
-Installing prints a line saying one dependency has install scripts that were
-not run — `msedge-tts`, whose `preinstall` is `npx only-allow pnpm`.
+Installing mentions one dependency whose install scripts were not run:
+`msedge-tts`, whose `preinstall` is `npx only-allow pnpm`.
 
-**Nothing is missing, and nothing needs approving.** That script builds nothing:
-it is a guard the library uses to make its own contributors work with pnpm, and
-it *fails* under npm on purpose. Your package manager skipping it is the correct
-outcome; approving it would break the install instead of fixing it. The library
-ships compiled JavaScript and has no native code.
+**Nothing is missing, and that script must not run.** It builds nothing — it is
+a latch the library uses to force *its own* contributors onto pnpm, and under
+any other package manager it fails on purpose. The library ships compiled
+JavaScript and has no native code.
 
-Measured on a clean machine: a fresh `npm install` exits 0, lists 322 voices
-from the service and returns real audio, with no build step and no local voices
-installed.
+**Under npm it is only a warning** and the install succeeds. Measured on a clean
+machine: `npm install` exits 0, the library lists 322 voices and returns real
+audio, with nothing built and no local voices installed.
+
+**Under pnpm — which is what a harness profile uses — it is an error**, and it
+fails the whole command:
+
+```
+[ERR_PNPM_IGNORED_BUILDS] Ignored build scripts: msedge-tts@2.0.7
+```
+
+pnpm writes a line into your profile's `pnpm-workspace.yaml` asking you to
+decide, and leaves it undecided:
+
+```yaml
+allowBuilds:
+  msedge-tts: set this to true or false
+```
+
+Set it to `false` and run the command again:
+
+```yaml
+allowBuilds:
+  msedge-tts: false
+```
+
+Do this straight away, because until that line is decided **every** install in
+that profile fails — including other people's plugins, which is a confusing way
+to find out.
 
 ## Configure
 

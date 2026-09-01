@@ -108,19 +108,43 @@ Si tu arnés usa otro nombre de perfil, cambia `web` por el tuyo.
 
 ### Sobre el aviso que imprime tu gestor de paquetes
 
-Al instalar aparece una lÃ­nea diciendo que una dependencia tiene scripts de
-instalaciÃ³n que no se han ejecutado: `msedge-tts`, cuyo `preinstall` es
-`npx only-allow pnpm`.
+Al instalar se menciona una dependencia cuyos scripts de instalación no se han
+ejecutado: `msedge-tts`, cuyo `preinstall` es `npx only-allow pnpm`.
 
-**No falta nada y no hay que aprobar nada.** Ese script no construye nada: es un
-cerrojo que la librerÃ­a usa para obligar a sus propios colaboradores a trabajar
-con pnpm, y bajo npm falla a propÃ³sito. Que tu gestor lo salte es el resultado
-correcto; aprobarlo romperÃ­a la instalaciÃ³n en vez de arreglarla. La librerÃ­a se
-publica con el JavaScript ya compilado y no tiene cÃ³digo nativo.
+**No falta nada, y ese script no debe ejecutarse.** No construye nada: es un
+cerrojo que la librería usa para obligar a *sus* colaboradores a trabajar con
+pnpm, y bajo cualquier otro gestor falla a propósito. La librería se publica con
+el JavaScript ya compilado y no tiene código nativo.
 
-Medido en una mÃ¡quina limpia: un `npm install` reciÃ©n hecho termina en 0, lista
-322 voces del servicio y devuelve audio de verdad, sin ningÃºn paso de
-construcciÃ³n y sin voces locales instaladas.
+**Con npm es solo un aviso** y la instalación termina bien. Medido en una máquina
+limpia: `npm install` termina en 0, la librería lista 322 voces y devuelve audio
+de verdad, sin construir nada y sin voces locales instaladas.
+
+**Con pnpm —que es lo que usa un perfil del arnés— es un error**, y tumba el
+comando entero:
+
+```
+[ERR_PNPM_IGNORED_BUILDS] Ignored build scripts: msedge-tts@2.0.7
+```
+
+pnpm te deja escrito un hueco en el `pnpm-workspace.yaml` de tu perfil pidiendo
+que decidas, y lo deja sin decidir:
+
+```yaml
+allowBuilds:
+  msedge-tts: set this to true or false
+```
+
+Ponlo en `false` y repite el comando:
+
+```yaml
+allowBuilds:
+  msedge-tts: false
+```
+
+Hazlo en cuanto lo veas, porque mientras ese hueco siga sin decidir falla
+**cualquier** instalación en ese perfil —también la de plugins de otra gente—,
+que es una forma bastante confusa de enterarse.
 
 ## Configuración
 
