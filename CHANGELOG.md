@@ -5,6 +5,35 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.0] - 2026-09-02
+
+**You can interrupt it now.** Talking to the agent while it was thinking, or
+while it was reading a reply aloud, did nothing at all: the turn detector was
+paused the moment a message was sent and did not come back until the whole
+reply had been read. On a long answer that is half a minute of deafness. Found
+by using it.
+
+- **Echo cancellation is now actually requested.** It never was: the microphone
+  was opened bare and the browser left to decide — and it decides differently
+  depending on how the device is asked for. Noise suppression and automatic
+  gain too, both for the microphone and for the detector, which opens its own.
+- **While the agent is thinking, the ear stays open.** Nothing is being spoken
+  then, so there is no echo to defend against; it was closed for no reason. It
+  now closes when the first word is actually spoken.
+- **You can talk over the reply and it stops.** The threshold is not guessed,
+  it is measured: for the first half second of every reply the microphone
+  listens, and what it hears *is* the echo, because nobody has spoken yet. To
+  count as a voice, sound must clear that floor by 3× and hold for a third of a
+  second. It adapts itself to headphones or speakers, and re-measures on every
+  reply. A door slam or a cough is too short to trigger it.
+- **One turn at a time, and the newest wins.** With the ear open, speaking
+  could start a second turn on top of the first — two transcriptions, two
+  drafts and two sends. Each turn now takes a number; the superseded one may no
+  longer write the draft, send, or read aloud.
+
+Eleven new tests over the interruption decision, including the two cases that
+would ruin the feature: the echo must not trigger it, and neither must a bang.
+
 ## [0.1.2] - 2026-09-01
 
 Documentation only; no change to what the plugin does.
