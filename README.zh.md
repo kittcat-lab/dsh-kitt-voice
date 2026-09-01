@@ -182,7 +182,7 @@ npm test
 ## 已经付过代价的陷阱
 
 十六个各花掉一整个下午的问题，连同它们的症状一并写下：
-[已经付过代价的陷阱](DOCUMENTACION/TRAPS.zh.md)。它们全都是在使用中暴露的，
+[已经付过代价的陷阱](https://github.com/kittcat-lab/dsh-kitt-voice/blob/main/DOCUMENTACION/TRAPS.zh.md)。它们全都是在使用中暴露的，
 而不是靠读代码发现的，而且没有一个报错。动到哪一部分之前，先读属于它的那一条。
 
 ## 许可证

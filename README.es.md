@@ -327,7 +327,7 @@ de la lectura y los pasos de velocidad.
 ## Las trampas ya pagadas
 
 Dieciséis fallos que costaron una tarde cada uno, escritos con su síntoma:
-[Las trampas ya pagadas](DOCUMENTACION/TRAPS.es.md). Todos salieron usándolo y
+[Las trampas ya pagadas](https://github.com/kittcat-lab/dsh-kitt-voice/blob/main/DOCUMENTACION/TRAPS.es.md). Todos salieron usándolo y
 no leyendo el código, y ninguno daba un error. Antes de tocar la parte que le
 toca a cada uno, se lee la suya.
 

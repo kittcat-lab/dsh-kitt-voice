@@ -1,7 +1,7 @@
 {
   "name": "dsh-kitt-voice",
-  "version": "0.1.0",
-  "description": "DSH KITT (DSH KITT) — Spanish-first voice for the DeepSeek Harness web UI: hands-free conversation, push-to-talk (Whisper), read-aloud replies, and a floating overlay window with global hotkeys. · DSH KITT 语音：为 DeepSeek Harness 打造的语音插件——免提对话、按键说话（Whisper）、朗读回复，以及带全局快捷键的悬浮窗；界面支持中文、英文和西班牙语。",
+  "version": "0.1.1",
+  "description": "DSH KITT — Spanish-first voice for the DeepSeek Harness web UI: hands-free conversation, push-to-talk (Whisper), read-aloud replies, and a floating overlay window with global hotkeys. · DSH KITT 语音：为 DeepSeek Harness 打造的语音插件——免提对话、按键说话（Whisper）、朗读回复，以及带全局快捷键的悬浮窗；界面支持中文、英文和西班牙语。",
   "type": "module",
   "license": "MIT",
   "author": {

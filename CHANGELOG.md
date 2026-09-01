@@ -5,6 +5,15 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.1] - 2026-09-01
+
+Packaging only; no change to what the plugin does.
+
+- The package description said the name twice — a leftover from the rename.
+- The link to the traps document is now absolute. That file is not shipped
+  inside the package, so a relative link went nowhere when the README was read
+  on npm rather than on GitHub.
+
 ## [0.1.0] - 2026-09-01
 
 First public release. Voice for the DeepSeek Harness web UI: talk to the agent
