@@ -46,6 +46,12 @@ do, and one of them is not a matter of effort:
   begin with fifteen seconds of silence. A sentence is only spoken once its
   ending has arrived: half a sentence and a pause sounds like a fault. Code
   blocks are named, not spelled out.
+- **You can interrupt it.** Talk over the reply and it stops. The threshold
+  is not a number picked in advance: for the first half second of every reply
+  the microphone listens, and what it hears *is* the echo, because nobody has
+  spoken yet. To count as a voice, sound has to clear that floor by 3× and hold
+  for a third of a second. It re-measures on every reply, so putting headphones
+  on mid-session adapts by itself, and a door slam is too short to trigger it.
 - **A voice worth listening to.** 104 neural voices, grouped by language and
   by country: 45 Spanish — Spain and every Spanish-speaking country in the
   Americas — 47 English and 12 Chinese. They are read out by Microsoft's
@@ -319,7 +325,7 @@ how a key pressed outside the browser reaches the page.
 npm test
 ```
 
-50 tests, run with `node --test`, no build step. They cover the parts where a
+66 tests, run with `node --test`, no build step. They cover the parts where a
 mistake is expensive: who may call the routes, whether a voice name can escape
 its folder, what the reply splitter promises, that the log fallback never
 throws inside the route it exists to help, the window's request allowlist, the
@@ -329,8 +335,6 @@ read-aloud sentence splitter and the speed steps.
 
 - **Local Whisper.** It would remove the key requirement inside a desktop
   shell. It needs model management and audio conversion, and is not written.
-- **Interrupting by voice.** Possible with headphones, where the microphone
-  cannot hear the reply. With open speakers it is not.
 - **Anything but Windows.** Nothing here is Windows-only — the voices, the
   window and the keys all have their equivalents — but it has only ever been
   run on Windows. Reports welcome.

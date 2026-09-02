@@ -46,6 +46,13 @@ y una de ellas no es cuestión de ganas:
   larga no empiece con quince segundos de silencio. Una frase no sale hasta que
   llega su final: media frase y una pausa suena a avería. Los bloques de código
   se nombran, no se deletrean.
+- **Se le puede cortar.** Le hablas encima mientras lee y se calla. El listón
+  no es un número elegido de antemano: durante el primer medio segundo de cada
+  respuesta el micrófono escucha, y lo que oye **es** el eco, porque todavía no
+  ha hablado nadie. Para contar como voz hay que pasar ese suelo por tres y
+  sostenerlo un tercio de segundo. Se vuelve a medir en cada respuesta, así que
+  ponerse los cascos a mitad de sesión se adapta solo, y un portazo dura menos
+  de lo necesario para dispararlo.
 - **Una voz que se deja escuchar.** 104 voces neuronales, agrupadas por
   idioma y por país: 45 en español —España y todos los países de América—, 47
   en inglés y 12 en chino. Las pone el servicio de lectura de Edge, sin clave y
@@ -330,7 +337,7 @@ donde una tecla pulsada fuera del navegador llega a la página.
 npm test
 ```
 
-50 pruebas, con `node --test` y sin paso de compilación. Cubren las partes
+66 pruebas, con `node --test` y sin paso de compilación. Cubren las partes
 donde equivocarse sale caro: quién puede llamar a las rutas, si un nombre de
 voz puede escaparse de su carpeta, qué promete el troceador de respuestas, que
 el rescate desde el registro nunca reviente dentro de la ruta a la que va a
@@ -342,8 +349,6 @@ de la lectura y los pasos de velocidad.
 - **Whisper local.** Quitaría la necesidad de clave dentro de una aplicación de
   escritorio. Necesita gestión de modelos y conversión de audio, y no está
   escrito.
-- **Interrumpir con la voz.** Es posible con cascos, donde el micrófono no oye
-  la respuesta. Con altavoces abiertos, no.
 - **Cualquier cosa que no sea Windows.** Aquí no hay nada que sea sólo de
   Windows —las voces, la ventana y las teclas tienen su equivalente— pero sólo
   se ha usado en Windows. Se agradecen informes.
