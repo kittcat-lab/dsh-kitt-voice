@@ -192,6 +192,17 @@ en español. Si a Whisper solo se le dice «español», los escribe fonéticamen
 apoyo** de los ajustes se le manda a Whisper para que esos términos se queden
 en inglés. Edítalo para tu propio campo.
 
+### Todo lo que se puede cambiar
+
+| Ajuste | Qué hace |
+| --- | --- |
+| `speechRate` | A qué velocidad se lee la respuesta. 1 es el ritmo propio de la voz; 0,5 es la mitad y 2 el doble. Vale para los tres motores, incluida la voz del sistema, que la lee la página y no el servidor. |
+| `uiLang` | Idioma de la interfaz del propio plugin: español, inglés o chino simplificado. Independiente del idioma de transcripción — puedes dictar en español con la interfaz en inglés. |
+| `buttonColours` | Los mandos, cada uno de su color, o todos en blanco. Los colores dicen de un vistazo qué hace cada uno; el modo sobrio es para quien eso le resulte ruidoso. |
+| `overlayAuto` | Abrir la ventana flotante sola en cuanto se usa la voz, y cerrarla con el arnés. Apagado por defecto: una ventana que aparece sola es una ventana que nadie ha pedido. |
+| `micLabel` | Qué micrófono, **por nombre**. Vacío significa el que tenga el sistema por defecto. Por nombre y no por identificador a propósito: un navegador le da a cada origen identificadores distintos para el mismo aparato, así que uno elegido en la ventana flotante no significaría nada en la página. |
+| `outputLabel` | Por qué altavoz o auriculares sale la respuesta, por nombre. |
+
 ## El detector de turno
 
 La conversación en manos libres tiene que saber cuándo has terminado la frase.

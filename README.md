@@ -190,6 +190,17 @@ Spanish sentences. Told only "Spanish", Whisper writes them phonetically
 vocabulary** in Settings is sent to Whisper so those terms stay in English.
 Edit it for your own field.
 
+### Everything you can change
+
+| Setting | What it does |
+| --- | --- |
+| `speechRate` | How fast the reply is read. 1 is the voice's own pace; 0.5 is half speed and 2 is double. It applies to all three engines, including the system voice, which is read by the page rather than the server. |
+| `uiLang` | Language of the plugin's own interface: Spanish, English or Simplified Chinese. Independent of the transcription language — you can dictate in Spanish with the interface in English. |
+| `buttonColours` | The controls each carry their own colour, or all of them in white. The colours say what each one does at a glance; the plain mode is for anyone who finds that noisy. |
+| `overlayAuto` | Open the floating window by itself the moment the voice is used, and close it with the harness. Off by default: a window that appears on its own is a window somebody did not ask for. |
+| `micLabel` | Which microphone, **by name**. Empty means the system default. By name and not by id on purpose: a browser hands every origin different ids for the same physical device, so an id chosen in the floating window would mean nothing in the page. |
+| `outputLabel` | Which speaker or headset the reply comes out of, by name. |
+
 ## The turn detector
 
 The hands-free conversation has to know when you have finished a sentence.
