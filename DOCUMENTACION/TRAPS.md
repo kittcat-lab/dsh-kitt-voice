@@ -113,45 +113,35 @@ ever comes back, it is a regression, and a regression outweighs a new find.
   the application raised no error at all: it simply picked the default device.
   When you touch a file with accents in it, check afterwards by reading it back.
 
-## Closing the ear was right, and closing it there was wrong
+## The client is served as ONE file, and an import kills the whole plugin
 
-**The detector hears itself.** With the microphone open while the reply is
-being read aloud, the turn detector picks up the plugin's own voice out of the
-speaker, decides it was spoken to, and the thing talks to itself forever. So
-the detector was paused, and that was correct.
+**`lib/client.js` has no imports, and that is not an accident.** It is served
+to the browser as a single standalone file — no bundler — and the harness loads
+it through its own module loader.
 
-**It was paused in the wrong place.** It was paused the moment the message was
-*sent* — but at that moment nothing has been spoken yet: the agent is
-thinking. So the ear was closed for the whole of a think that can run for
-several seconds, with no echo whatsoever to defend against. Symptom, found by
-using it: you talk to it while it thinks and it is simply deaf. Nothing in the
-interface says so, because from the inside nothing is wrong.
+Add one `import` of a sibling file and the harness stops with:
 
-The cure is to close it when the **first word is actually spoken**, not when
-the message leaves.
+    failed to import loader entry (dsh-kitt-voice): client-modules: bundle
+    /plugins/dsh-kitt-voice/client.js loaded without registering
+    "dsh-kitt-voice" via __ModuleLoader__.load
 
-**And a second one hiding underneath: echo cancellation was never requested.**
-The microphone was opened bare — `getUserMedia({ audio: true })` — and the
-browser left to decide. It decides differently depending on how the device is
-asked for. In a voice plugin that is not a detail: it is the difference between
-being able to talk with the speakers on and not.
+**The whole plugin is gone, not just that function** — no microphone, no
+window, no toolbar. The harness's own page says "Failed to load plugins" and
+nothing points at the import.
 
-**Then, how to interrupt at all without guessing.** A fixed threshold is a bet
-about somebody else's room, their volume, their speakers. Bet one way and it
-cuts itself off every other sentence; bet the other and it never cuts at all.
+This happened by doing the tidy thing: the interruption logic was moved into
+`lib/corte.js` so it could be tested without a browser, and imported back.
+Every test still passed — they import the module directly in Node, where
+imports are fine. It was found by somebody opening the app.
 
-So it is not guessed, it is measured. For the first half second of every reply
-the microphone listens, and what it hears **is** the echo, by definition:
-nobody has spoken yet. That is the floor for this machine, in this room, at
-this volume. To count as a voice, sound must clear that floor by 3× and hold
-for a third of a second. It re-measures on every reply, so headphones going on
-mid-session adapt by themselves.
+**So the logic lives inside the client, and `lib/corte.js` is a second copy
+kept only so it can be tested.** Duplication is bad; duplication with a test
+that fails the moment the two drift apart is the only thing that works here.
+That test also refuses any `import` line in `client.js` at all.
 
-**And two things that would have made it useless without them:** stopping the
-current utterance is not stopping — the reading loop starts the next chunk half
-a second later unless it is told to stop too. And the detector has been
-recording since it first heard the echo, so unless that buffer is thrown away,
-what gets sent for transcription **starts with the plugin's own voice**.
+The lesson is not about this plugin: **a refactor that every test approves can
+still be the thing that takes the product down.** If the tests never load the
+code the way production loads it, they are not testing that.
 
 ## One that stopped being true
 

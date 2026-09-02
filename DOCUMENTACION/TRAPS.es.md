@@ -152,45 +152,35 @@ tocar cualquier fichero con tildes o con alfabeto no latino, se vuelve a leer y
 se comprueba** — y si la comprobación puede ser una línea de código en vez de un
 par de ojos, que lo sea.
 
-## Cerrar el oído estaba bien, y cerrarlo ahí estaba mal
+## El cliente se sirve como UN fichero, y un import mata el plugin entero
 
-**El detector se oye a sí mismo.** Con el micrófono abierto mientras se lee la
-respuesta en voz alta, el detector de turno recoge la propia voz del plugin
-saliendo del altavoz, decide que le han hablado, y la cosa se pone a hablar
-sola para siempre. Así que se pausaba el detector, y eso era correcto.
+**`lib/client.js` no tiene imports, y eso no es casualidad.** Se le sirve al
+navegador como un fichero suelto —sin empaquetador— y el arnés lo carga con su
+propio cargador de módulos.
 
-**Se pausaba en el sitio equivocado.** Se pausaba en cuanto se *enviaba* el
-mensaje — pero en ese momento todavía no ha sonado nada: el agente está
-pensando. O sea que el oído se cerraba durante todo un pensar que puede durar
-varios segundos, sin ningún eco del que defenderse. Síntoma, encontrado
-usándolo: le hablas mientras piensa y simplemente está sordo. Y no lo dice
-nada en pantalla, porque desde dentro no está pasando nada malo.
+Métele un `import` de un fichero hermano y el arnés se para con esto:
 
-La cura es cerrarlo cuando **suena la primera palabra**, no cuando sale el
-mensaje.
+    failed to import loader entry (dsh-kitt-voice): client-modules: bundle
+    /plugins/dsh-kitt-voice/client.js loaded without registering
+    "dsh-kitt-voice" via __ModuleLoader__.load
 
-**Y otra debajo: nunca se pedía cancelación de eco.** Se abría el micrófono a
-secas —`getUserMedia({ audio: true })`— y se dejaba que el navegador decidiera.
-Y decide distinto según cómo se le pida el aparato. En un plugin de voz eso no
-es un detalle: es la diferencia entre poder hablar con los altavoces puestos y
-no poder.
+**Y se va el plugin ENTERO, no sólo esa función**: ni micrófono, ni ventana, ni
+botones. La propia página del arnés dice «Failed to load plugins» y nada apunta
+al import.
 
-**Y luego, cómo cortar sin adivinar.** Un umbral fijo es una apuesta sobre la
-habitación de otro, su volumen y sus altavoces. Apuestas de más y se corta solo
-cada dos frases; apuestas de menos y no se corta nunca.
+Pasó haciendo lo ordenado: se sacó la lógica del corte a `lib/corte.js` para
+poder probarla sin un navegador, y se importó de vuelta. **Todas las pruebas
+seguían en verde** — importan el módulo directamente en Node, donde los imports
+funcionan de sobra. Lo encontró alguien abriendo la aplicación.
 
-Así que no se adivina, se mide. Durante el primer medio segundo de cada
-respuesta el micrófono escucha, y lo que oye **es** el eco, por definición:
-todavía no ha hablado nadie. Ése es el suelo de esta máquina, en esta
-habitación, a este volumen. Para contar como voz hay que pasarlo por tres y
-sostenerlo un tercio de segundo. Se vuelve a medir en cada respuesta, así que
-unos cascos puestos a mitad de sesión se adaptan solos.
+**Así que la lógica vive dentro del cliente, y `lib/corte.js` es una segunda
+copia que existe sólo para poder probarla.** Duplicar es malo; duplicar con una
+prueba que salta en cuanto las dos se separan es lo único que funciona aquí. Esa
+prueba además rechaza cualquier línea `import` en `client.js`.
 
-**Y dos cosas que sin ellas no habría servido de nada:** callar lo que suena no
-es callarse — el bucle de lectura arranca el trozo siguiente medio segundo
-después si no se le dice a él también que pare. Y el detector lleva grabando
-desde que oyó el eco, así que si no se tira ese trozo, lo que se manda a
-transcribir **empieza con la voz del propio plugin**.
+Y la lección no va de este plugin: **una limpieza que aprueban todas las
+pruebas puede ser justo lo que tumbe el producto.** Si las pruebas no cargan el
+código como lo carga producción, no están probando eso.
 
 ## Y una que dejó de ser verdad
 

@@ -5,6 +5,26 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.1] - 2026-09-02
+
+**Fixes a 0.2.0 that does not load at all.** If you installed 0.2.0, the
+harness stops with `Failed to load plugins` and the whole plugin is gone — no
+microphone, no window, no toolbar. Upgrade.
+
+- `lib/client.js` is served to the browser as a single standalone file, with
+  no bundler, and the harness loads it through its own module loader. 0.2.0
+  added an `import` of a sibling module to it, and the bundle then loads
+  without registering itself. The interruption logic is back inside the client;
+  `lib/corte.js` remains as the copy that can be tested outside a browser.
+- Three tests now guard that pairing: the two copies must agree on their four
+  constants, they must decide identically on the cases that matter, and
+  `client.js` must contain no `import` line at all.
+
+Every test passed on the broken build — they import the module directly in
+Node, where imports are fine. That is the actual lesson, and it is written down
+in the traps document: if the tests do not load the code the way production
+loads it, they are not testing that.
+
 ## [0.2.0] - 2026-09-02
 
 **You can interrupt it now.** Talking to the agent while it was thinking, or
