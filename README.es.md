@@ -378,7 +378,7 @@ dos abiertas, y los pasos de velocidad.
 
 ## Las trampas ya pagadas
 
-Veintitrés fallos que costaron una tarde cada uno, escritos con su síntoma:
+Veinticuatro fallos que costaron una tarde cada uno, escritos con su síntoma:
 [Las trampas ya pagadas](https://github.com/kittcat-lab/dsh-kitt-voice/blob/main/DOCUMENTACION/TRAPS.es.md). Todos salieron usándolo y
 no leyendo el código, y ninguno daba un error. Antes de tocar la parte que le
 toca a cada uno, se lee la suya.

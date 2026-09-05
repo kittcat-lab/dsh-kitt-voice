@@ -2,7 +2,7 @@
 
 *[Español](TRAPS.es.md) · [简体中文](TRAPS.zh.md)*
 
-Twenty-three bugs that cost an afternoon each. **Every one of them turned up by
+Twenty-four bugs that cost an afternoon each. **Every one of them turned up by
 USING the thing, none by reading the code, and not one of them raised an
 error** — which is exactly why they are written down: these are the ones you
 cannot find by looking.
@@ -146,6 +146,18 @@ ever comes back, it is a regression, and a regression outweighs a new find.
     server truncated at two thousand characters without saying so while Piper
     timed out on a long piece and fell back. Engine, voice and rate are decided
     once per reply; a failed engine stays failed until the next, and says so.
+24. **The detector is spoken to one step at a time, and you wait.** Its
+    `pause()` and `start()` are asynchronous and not symmetrical: pause
+    marks "not listening", releases the microphone and THEN stops the
+    processor; start marks "listening", resumes the processor and THEN asks
+    for the microphone again. Called back to back without waiting — which is
+    what the voice cut did — the "stop" landed after the "resume": microphone
+    open, processor stopped, the bar blue and nobody hearing anything. And
+    since start had already marked "listening", no later start did a thing.
+    Seen on the second message. Every step waits for the one before, and a
+    start that fails is reported, because the detector does not report it.
+    Also: start re-asks for the microphone with its factory constraints, not
+    the chosen device; give it the resume door as well.
 ---
 
 ## And three about measuring, good for any project

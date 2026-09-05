@@ -2,7 +2,7 @@
 
 *[English](TRAPS.md) | [简体中文](TRAPS.zh.md)*
 
-Veintitrés fallos que costaron una tarde entera cada uno. **Todos salieron
+Veinticuatro fallos que costaron una tarde entera cada uno. **Todos salieron
 USÁNDOLO, ninguno leyendo el código, y ninguno daba un error** — por eso están
 escritos: son justo los que no se encuentran mirando.
 
@@ -145,6 +145,17 @@ vuelve a aparecer, es una regresión y pesa más que un hallazgo nuevo.
     con un trozo largo y caía a la del sistema. Motor, voz y ritmo se deciden
     una vez por respuesta; un motor caído se queda caído hasta la siguiente, y
     se dice.
+24. **Al detector se le habla de uno en uno, y esperando.** Sus `pause()` y
+    `start()` son asíncronos y no simétricos: pause marca «no escucho», suelta
+    el micrófono y DESPUÉS para el procesador; start marca «escucho», reanuda
+    el procesador y DESPUÉS vuelve a pedir el micrófono. Llamados seguidos sin
+    esperar —el corte de voz lo hacía así—, el «parar» llegaba después del
+    «reanudar»: micrófono abierto, procesador parado, la barra en azul y nadie
+    oye nada. Y como start ya había marcado «escucho», ningún start posterior
+    hacía nada. Se vio al segundo mensaje. Cada paso espera al anterior, y un
+    start que falla se dice, porque el detector no lo dice. De paso: start
+    vuelve a pedir el micrófono con sus valores de fábrica, no con el que se
+    eligió; hay que darle también la puerta de reanudar.
 ---
 
 ## Y tres de medir, que valen para cualquier proyecto

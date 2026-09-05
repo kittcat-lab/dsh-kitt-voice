@@ -371,7 +371,7 @@ keys belong to when two are open, and the speed steps.
 
 ## Traps already paid for
 
-Twenty-three bugs that each cost an afternoon, written down with their symptoms:
+Twenty-four bugs that each cost an afternoon, written down with their symptoms:
 [Traps already paid for](https://github.com/kittcat-lab/dsh-kitt-voice/blob/main/DOCUMENTACION/TRAPS.md). Every one of them turned up by
 using the thing rather than by reading the code, and not one raised an error.
 Read the relevant one before touching the part it belongs to.

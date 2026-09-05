@@ -57,6 +57,14 @@ by using it; none raised an error.
   single-instance lock. It now opens only when the voice goes from idle to in
   use; closed by hand, it stays closed until the next time the voice is
   started, or until the gear asks for it.
+- **Deaf after an interruption.** The detector's `pause()` and `start()` are
+  asynchronous and were called back to back when a voice cut in: the pause's
+  "stop the processor" landed after the start's "resume it", leaving the
+  microphone open and the processor stopped — the bar blue, nothing heard,
+  and no later start able to fix it. They are now serialised and awaited, and
+  a start that fails is reported. The conversation also opens the microphone
+  chosen in the menu (and re-opens the same one after every pause) instead of
+  the system default.
 - **Two pages, one set of keys.** With the harness open in the installed app
   and in a tab, both received every order — two microphones, two sends — and
   the companion window flickered between their states. Each page now
@@ -76,7 +84,7 @@ by using it; none raised an error.
 - `lib/paginas.js`: which page the keys belong to when more than one is
   open, with 10 tests.
 - 9 tests over the splitter that feeds the voices.
-- Seven new entries in the traps document, one per fault above.
+- Eight new entries in the traps document, one per fault above.
 
 ## [0.2.1] - 2026-09-02
 
