@@ -261,8 +261,9 @@ herramientas del arnés: mismo dibujo, mismo color y mismo tamaño, porque son e
 mismo mando en dos sitios.
 
 - la **K** de la marca, a la izquierda — el modo KITT: conversación continua,
-  sin tocar nada más. Se enciende en azul mientras está en marcha y se apaga
-  desde cualquiera de los dos sitios. El texto «kittcat.com» de al lado abre
+  sin tocar nada más. Con el modo en marcha toma el color del estado —azul
+  esperando, verde escuchando, rojo hablando— y su halo late suave mientras
+  piensa o habla. Se apaga desde cualquiera de los dos sitios. El texto «kittcat.com» de al lado abre
   la web, y sólo en reposo;
 - un micrófono **rojo** — pulsa, habla y pulsa otra vez; el texto cae en la
   caja del mensaje y **lo envías tú** con Enter;

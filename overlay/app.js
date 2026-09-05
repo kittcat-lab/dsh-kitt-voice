@@ -71,15 +71,21 @@
   // for someone who wants to see the product. The main process owns the window
   // size, so it tells us which one is current.
   let shape = 'symbol';
-  /* LA K, ENCENDIDA O APAGADA. Encendida es el modo KITT en marcha: la misma
-   * insignia con el fondo azul. Si una marca privada no trae la variante
-   * encendida, se enciende la que haya con un halo azul, en paint(). */
+  /* LA K, DEL COLOR DEL ESTADO. Apagada es la marca tal cual: reposo. Con el
+   * modo KITT en marcha, la insignia toma el color de lo que pasa y la K se
+   * pone blanca. Si una marca privada no sabe encenderse, se enciende la que
+   * haya con el halo de su envoltorio, que sí es nuestro. */
+  const kHalo = document.getElementById('k');
   let enMarchaAhora = false;
+  let colorK = null;          // null = apagada
   function vestir() {
     const M = window.OVERLAY_MARKS;
-    const encendida = enMarchaAhora && M[`${shape}On`];
+    const encendida = colorK && typeof M.encendida === 'function' ? M.encendida(shape, colorK) : null;
     mark.src = encendida || M[shape];
     mark.setAttribute('aria-pressed', enMarchaAhora ? 'true' : 'false');
+    kHalo.style.setProperty('--k', colorK || 'transparent');
+    // Sin variante encendida, al menos el halo dice el color.
+    kHalo.style.boxShadow = colorK && !encendida ? `0 0 7px 2px ${colorK}` : '';
   }
   function wear(next) {
     shape = window.OVERLAY_MARKS[next] ? next : 'symbol';
@@ -144,21 +150,36 @@
   /** El modo que se está pintando ahora: la web sólo se abre en reposo. */
   let modoActual = 'idle';
 
+  /* LOS COLORES DE LA K, con el modo KITT en marcha. Los mismos que el borde,
+   * que ya los enseñó: verde es que hay una voz, azul es que trabaja, rojo es
+   * que habla. Y azul también en reposo entre turnos, que es «el modo está
+   * puesto». Apagada —la marca de siempre— es que el modo no está. */
+  const COLOR_K = {
+    armed: '#1f5fc4',
+    listening: '#3fbf4a',
+    transcribing: '#2f7bff',
+    thinking: '#2f7bff',
+    reading: '#ff3b30',
+    error: '#1f5fc4',
+  };
+
   function paint(mode, level, words, enMarcha, silenciado) {
     const look = LOOK[mode] || LOOK.idle;
     modoActual = String(mode || 'idle');
 
-    // La K encendida mientras el modo KITT está en marcha.
-    if (Boolean(enMarcha) !== enMarchaAhora) {
+    // La K, del color del estado mientras el modo KITT está en marcha.
+    const nuevoColor = enMarcha ? (COLOR_K[modoActual] || COLOR_K.armed) : null;
+    if (nuevoColor !== colorK || Boolean(enMarcha) !== enMarchaAhora) {
       enMarchaAhora = Boolean(enMarcha);
+      colorK = nuevoColor;
       vestir();
     }
-    // Halo azul de la K encendida: vale también para una marca privada que no
-    // traiga su variante encendida.
-    const haloK = enMarchaAhora ? ' drop-shadow(0 0 4px rgba(90,162,255,.95))' : '';
+    // Y late, poco, mientras piensa o habla.
+    kHalo.classList.toggle('late', Boolean(enMarcha)
+      && (modoActual === 'thinking' || modoActual === 'transcribing' || modoActual === 'reading'));
 
     if (!look.colour) {
-      mark.style.filter = SOMBRA_BASE + haloK;
+      mark.style.filter = SOMBRA_BASE;
       stage.style.boxShadow = REPOSO;
       stage.style.borderColor = 'rgba(255,255,255,.13)';
       stage.classList.remove('awake');
@@ -175,7 +196,7 @@
       stage.style.borderColor = look.colour;
       stage.style.boxShadow =
         `${REPOSO}, 0 0 ${cerca}px ${look.colour}, 0 0 ${lejos}px ${look.colour}66`;
-      mark.style.filter = `${SOMBRA_BASE} drop-shadow(0 0 3px ${look.colour})${haloK}`;
+      mark.style.filter = `${SOMBRA_BASE} drop-shadow(0 0 3px ${look.colour})`;
       stage.classList.add('awake');
     }
 
@@ -404,7 +425,7 @@
   // La K y el texto de la web se pulsan: pulsarlos no arrastra la ventana.
   const agarrar = (e) => {
     if (e.button !== 0) return;
-    if (e.target.closest('button, select, input, #mark, #web')) return;
+    if (e.target.closest('button, select, input, #k, #web')) return;
     window.overlay.dragStart();
   };
   document.getElementById('panel').addEventListener('mousedown', agarrar);

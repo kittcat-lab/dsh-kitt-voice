@@ -48,27 +48,46 @@
     `<rect x="2" y="2" width="${ancho - 4}" height="${alto - 4}" rx="${radio}"
        fill="${FONDO}" stroke="${BORDE}" stroke-width="3"/>`;
 
-  /* ENCENDIDA. La K es el mando del modo KITT, y mientras ese modo está en
-   * marcha la insignia se pone del azul que tenía el botón de conversación
-   * cuando era un botón aparte. Sin azul, reposo. Una marca privada que no
-   * traiga las variantes encendidas sigue valiendo: la ventana enciende la
-   * que tenga con un halo. */
-  const FONDO_ON = '#1f5fc4';
-  const BORDE_ON = '#86bcff';
-  const insigniaOn = (ancho, alto, radio) =>
-    `<rect x="2" y="2" width="${ancho - 4}" height="${alto - 4}" rx="${radio}"
-       fill="${FONDO_ON}" stroke="${BORDE_ON}" stroke-width="3"/>`;
-
   const rotulo =
     `<text x="88" y="56" font-family="Segoe UI, Inter, system-ui, sans-serif"
        font-size="34" font-weight="600" letter-spacing="1" fill="${TINTA}">KITT</text>
      <text x="88" y="76" font-family="Segoe UI, Inter, system-ui, sans-serif"
        font-size="13" letter-spacing="3.5" fill="${TINTA}" fill-opacity=".55">FOR DSH</text>`;
 
+  /* ENCENDIDA, DEL COLOR DEL ESTADO.
+   *
+   * La K es el mando del modo KITT. En reposo es la marca tal cual: la K
+   * verde sobre la insignia oscura. Con el modo en marcha, la insignia toma
+   * el color de lo que está pasando —azul esperando, verde escuchando, rojo
+   * hablando— y la K se pone blanca para que se lea sobre cualquiera de los
+   * tres. Los colores los decide la ventana, que es quien sabe el estado; aquí
+   * sólo se dibuja. Se guarda cada dibujo hecho: son tres o cuatro y se piden
+   * varias veces por segundo.
+   *
+   * Una marca privada (marks.local.js) que no traiga `encendida` sigue
+   * valiendo: la ventana enciende entonces la que tenga con un halo. */
+  const BLANCO = '#ffffff';
+  const letraEn = (x, y, lado, color) =>
+    `<g transform="translate(${x},${y}) scale(${lado / 28})">
+       <path d="${K}" fill="${color}"/>
+     </g>`;
+  const insigniaDe = (ancho, alto, radio, fondo) =>
+    `<rect x="2" y="2" width="${ancho - 4}" height="${alto - 4}" rx="${radio}"
+       fill="${fondo}" stroke="rgba(255,255,255,.45)" stroke-width="3"/>`;
+  const hechas = new Map();
+  const encendida = (forma, color) => {
+    const clave = `${forma}|${color}`;
+    if (!hechas.has(clave)) {
+      hechas.set(clave, forma === 'wordmark'
+        ? svg(236, 96, insigniaDe(236, 96, 26, color) + letraEn(22, 24, 48, BLANCO) + rotulo)
+        : svg(128, 128, insigniaDe(128, 128, 30, color) + letraEn(30, 30, 68, BLANCO)));
+    }
+    return hechas.get(clave);
+  };
+
   window.OVERLAY_MARKS = {
     symbol: svg(128, 128, insignia(128, 128, 30) + marca(30, 30, 68)),
     wordmark: svg(236, 96, insignia(236, 96, 26) + marca(22, 24, 48) + rotulo),
-    symbolOn: svg(128, 128, insigniaOn(128, 128, 30) + marca(30, 30, 68)),
-    wordmarkOn: svg(236, 96, insigniaOn(236, 96, 26) + marca(22, 24, 48) + rotulo),
+    encendida,
   };
 })();

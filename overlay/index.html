@@ -112,9 +112,24 @@
      clic llega a su sitio; y de paso, una barra sin marca no se distingue de
      cualquier otra cosa flotando por la pantalla. El puntero lo dice: si algo
      se puede pulsar, tiene que parecerlo. */
-  /* LA K ES EL MANDO DEL MODO KITT. Se enciende con la insignia en azul
-     mientras la conversación está en marcha; apagada, reposo. Ya no abre la
-     web: eso lo hace sólo el texto de al lado, y sólo en reposo. */
+  /* LA K ES EL MANDO DEL MODO KITT. En reposo, la marca tal cual. Con el
+     modo en marcha la insignia toma el color del estado —azul esperando,
+     verde escuchando, rojo hablando— y su halo late mientras piensa o habla.
+     Ya no abre la web: eso lo hace sólo el texto de al lado, y sólo en reposo. */
+  #k { position: relative; flex: 0 0 auto; display: inline-flex; line-height: 0;
+    border-radius: 6px; --k: transparent; }
+  #stage.wordmark #k { border-radius: 7px; }
+  /* EL LATIDO. Pequeño y lento a propósito: es una señal de reojo, no un
+     aviso. Sólo mientras piensa o habla; escuchando, el borde ya crece con la
+     voz y con dos cosas moviéndose no se mira ninguna. */
+  #k.late { animation: latir 1.5s ease-in-out infinite; }
+  @keyframes latir {
+    0%, 100% { box-shadow: 0 0 3px 0 var(--k); }
+    50%      { box-shadow: 0 0 11px 3px var(--k); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    #k.late { animation: none; box-shadow: 0 0 6px 1px var(--k); }
+  }
   #mark { position: relative; height: auto; opacity: .85; flex: 0 0 auto;
     cursor: pointer; -webkit-app-region: no-drag;
     transition: opacity .25s ease, filter .22s ease;
@@ -299,7 +314,10 @@
 </style>
 
 <div id="stage" class="symbol">
-  <img id="mark" alt="Modo KITT" role="button" tabindex="0" aria-pressed="false">
+  <!-- LA K, dentro de su halo. El halo es del color del estado y late suave
+       mientras piensa o habla: algo que se mueve, poco, para saber de reojo
+       que está en ello. -->
+  <span id="k"><img id="mark" alt="Modo KITT" role="button" tabindex="0" aria-pressed="false"></span>
   <!-- LA WEB, A LA IZQUIERDA DEL TODO Y SIEMPRE VISIBLE.
        Esto se regala, así que lo justo es que se vea de dónde sale. Va pegada
        a la marca, apagadita, y se enciende al pasar por encima: quien no la

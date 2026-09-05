@@ -256,8 +256,9 @@ drawing, same colour, same size, because they are the same control in two
 places.
 
 - the brand's **K**, on the left — KITT mode: hands-free conversation,
-  nothing else to press. It lights up blue while the mode is on and turns off
-  from either side. The «kittcat.com» text beside it opens the website, and
+  nothing else to press. While the mode is on it takes the colour of the
+  state — blue waiting, green listening, red speaking — and its halo pulses
+  gently while it thinks or speaks. It turns off from either side. The «kittcat.com» text beside it opens the website, and
   only at rest;
 - a **red** microphone — press, speak, press again; the text lands in the
   message box and **you send it** with Enter;

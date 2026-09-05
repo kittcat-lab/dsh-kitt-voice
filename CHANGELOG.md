@@ -85,7 +85,9 @@ by using it; none raised an error.
   and a blue speech bubble side by side — two ways of talking that were easy
   to confuse — and the brand mark opened the website, which was intrusive.
   Now the brand's K, on the left, switches the hands-free conversation on and
-  off and lights up blue while it is on; the bubble button is gone; the
+  off; while the mode is on it takes the colour of the state — blue waiting,
+  green listening, red speaking — and its halo pulses gently while it thinks
+  or speaks; the bubble button is gone; the
   website opens only from the «kittcat.com» text beside it, and only at rest.
   The bar reads, left to right: K, state, then red microphone, speaker, mute,
   gear, close. The harness tool row mirrors it, as it always has.
