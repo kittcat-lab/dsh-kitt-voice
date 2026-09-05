@@ -112,6 +112,9 @@
      clic llega a su sitio; y de paso, una barra sin marca no se distingue de
      cualquier otra cosa flotando por la pantalla. El puntero lo dice: si algo
      se puede pulsar, tiene que parecerlo. */
+  /* LA K ES EL MANDO DEL MODO KITT. Se enciende con la insignia en azul
+     mientras la conversación está en marcha; apagada, reposo. Ya no abre la
+     web: eso lo hace sólo el texto de al lado, y sólo en reposo. */
   #mark { position: relative; height: auto; opacity: .85; flex: 0 0 auto;
     cursor: pointer; -webkit-app-region: no-drag;
     transition: opacity .25s ease, filter .22s ease;
@@ -219,7 +222,6 @@
      modo sobrio de abajo se resuelve con tres líneas en vez de reescribirlo
      todo. */
   #turn { --tinta: #ff6b5e; --fuerte: #ff8a80; --dado: #c8372c; --fondo: rgba(50,20,18,.96); }
-  #talk { --tinta: #5aa2ff; --fuerte: #86bcff; --dado: #1f5fc4; --fondo: rgba(16,30,52,.96); }
   #micmute { --tinta: #ffb020; --fuerte: #ffd27a; --dado: #a86c00; --fondo: rgba(48,34,6,.96); }
   #speak { --tinta: #cfd3d6; --fuerte: #ffffff; --dado: #3a4046; --fondo: rgba(38,42,47,.96); }
   #menu { --tinta: #cfd3d6; --fuerte: #ffffff; --dado: #3a4046; --fondo: rgba(38,42,47,.96); }
@@ -230,7 +232,7 @@
      quiere una barra que no cante nada encima de lo suyo. Con esto los cuatro
      se ven iguales y en blanco, y lo único que sigue teniendo color es el borde
      —el estado—, porque eso no es adorno: es información. */
-  #stage.sobrio #turn, #stage.sobrio #talk, #stage.sobrio #micmute, #stage.sobrio #speak,
+  #stage.sobrio #turn, #stage.sobrio #micmute, #stage.sobrio #speak,
   #stage.sobrio #menu, #stage.sobrio #quit {
     --tinta: #cfd3d6; --fuerte: #ffffff; --dado: #3a4046; --fondo: rgba(38,42,47,.96);
   }
@@ -241,7 +243,7 @@
 
   /* ENCENDIDOS mientras hacen algo. Un interruptor que no dice si está dado no
      es un interruptor: es un botón que pulsas a ver qué pasa. */
-  #stage.grabando #turn, #stage.enmarcha #talk, #stage.silenciado #micmute,
+  #stage.grabando #turn, #stage.silenciado #micmute,
   #stage.leyendo #speak {
     color: #fff; background: var(--dado);
     border-color: var(--fuerte);
@@ -297,7 +299,7 @@
 </style>
 
 <div id="stage" class="symbol">
-  <img id="mark" alt="DSH KITT" role="button" tabindex="0">
+  <img id="mark" alt="Modo KITT" role="button" tabindex="0" aria-pressed="false">
   <!-- LA WEB, A LA IZQUIERDA DEL TODO Y SIEMPRE VISIBLE.
        Esto se regala, así que lo justo es que se vea de dónde sale. Va pegada
        a la marca, apagadita, y se enciende al pasar por encima: quien no la
@@ -321,13 +323,20 @@
       </svg>
     </button>
 
-    <!-- The open call: it stays listening, answers, listens again, until you
-         stop it. Two bubbles, because that is what a conversation looks like. -->
-    <button id="talk" title="Conversación · Conversation" aria-label="Conversación">
+    <!-- EL MODO KITT NO TIENE BOTÓN PROPIO: es la K de la izquierda. Había
+         aquí un bocadillo azul, y con el micrófono rojo al lado eran dos modos
+         de hablar que se confundían. La marca encendida en azul es el modo
+         especial; la marca apagada, los mandos normales. -->
+
+    <!-- VOLVER A ESCUCHAR LA RESPUESTA. Aquí y no sólo en la página, y por la
+         razón de ser de esta ventana: si estabas en otra cosa y se te ha
+         escapado lo que dijo, es justo aquí donde lo vas a querer repetir, sin
+         saltar a ninguna parte. -->
+    <button id="speak" title="Leer los mensajes" aria-label="Leer los mensajes">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <path d="M8 13H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
-        <path d="M10 10h9a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-3l-3 3v-3h-3a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2z"/>
+        <path d="M11 5 6 9H3v6h3l5 4V5z"/>
+        <path d="M15.5 8.5a5 5 0 0 1 0 7"/>
       </svg>
     </button>
 
@@ -341,18 +350,6 @@
         <path d="M12 3a3 3 0 0 1 3 3v5a3 3 0 0 1-6 0V6a3 3 0 0 1 3-3z"/>
         <path d="M5 11a7 7 0 0 0 14 0M12 18v3"/>
         <path d="M4 4l16 16"/>
-      </svg>
-    </button>
-
-    <!-- VOLVER A ESCUCHAR LA RESPUESTA. Aquí y no sólo en la página, y por la
-         razón de ser de esta ventana: si estabas en otra cosa y se te ha
-         escapado lo que dijo, es justo aquí donde lo vas a querer repetir, sin
-         saltar a ninguna parte. -->
-    <button id="speak" title="Leer los mensajes" aria-label="Leer los mensajes">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-           stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <path d="M11 5 6 9H3v6h3l5 4V5z"/>
-        <path d="M15.5 8.5a5 5 0 0 1 0 7"/>
       </svg>
     </button>
 

@@ -45,9 +45,10 @@
     }
     // Los botones de la barra dicen lo suyo al pasar por encima, y eso también
     // se traduce: un botón sin palabras es un botón que hay que adivinar.
+    // La K es el mando del modo KITT; la web la abre sólo el texto de al lado.
     const rotulos = {
-      turn: 'turnTitle', talk: 'talkTitle', menu: 'menuTitle',
-      quit: 'quitTitle', mark: 'brandTitle', web: 'brandTitle', micmute: 'muteTitle', speak: 'speakTitle',
+      turn: 'turnTitle', mark: 'talkTitle', menu: 'menuTitle',
+      quit: 'quitTitle', web: 'brandTitle', micmute: 'muteTitle', speak: 'speakTitle',
     };
     for (const [id, clave] of Object.entries(rotulos)) {
       const b = document.getElementById(id);
@@ -70,9 +71,19 @@
   // for someone who wants to see the product. The main process owns the window
   // size, so it tells us which one is current.
   let shape = 'symbol';
+  /* LA K, ENCENDIDA O APAGADA. Encendida es el modo KITT en marcha: la misma
+   * insignia con el fondo azul. Si una marca privada no trae la variante
+   * encendida, se enciende la que haya con un halo azul, en paint(). */
+  let enMarchaAhora = false;
+  function vestir() {
+    const M = window.OVERLAY_MARKS;
+    const encendida = enMarchaAhora && M[`${shape}On`];
+    mark.src = encendida || M[shape];
+    mark.setAttribute('aria-pressed', enMarchaAhora ? 'true' : 'false');
+  }
   function wear(next) {
     shape = window.OVERLAY_MARKS[next] ? next : 'symbol';
-    mark.src = window.OVERLAY_MARKS[shape];
+    vestir();
     stage.classList.toggle('symbol', shape === 'symbol');
     stage.classList.toggle('wordmark', shape === 'wordmark');
   }
@@ -130,11 +141,24 @@
    *  rather than in it. The state colour is added to this. */
   const REPOSO = '0 3px 14px rgba(0,0,0,.55)';
 
+  /** El modo que se está pintando ahora: la web sólo se abre en reposo. */
+  let modoActual = 'idle';
+
   function paint(mode, level, words, enMarcha, silenciado) {
     const look = LOOK[mode] || LOOK.idle;
+    modoActual = String(mode || 'idle');
+
+    // La K encendida mientras el modo KITT está en marcha.
+    if (Boolean(enMarcha) !== enMarchaAhora) {
+      enMarchaAhora = Boolean(enMarcha);
+      vestir();
+    }
+    // Halo azul de la K encendida: vale también para una marca privada que no
+    // traiga su variante encendida.
+    const haloK = enMarchaAhora ? ' drop-shadow(0 0 4px rgba(90,162,255,.95))' : '';
 
     if (!look.colour) {
-      mark.style.filter = SOMBRA_BASE;
+      mark.style.filter = SOMBRA_BASE + haloK;
       stage.style.boxShadow = REPOSO;
       stage.style.borderColor = 'rgba(255,255,255,.13)';
       stage.classList.remove('awake');
@@ -151,7 +175,7 @@
       stage.style.borderColor = look.colour;
       stage.style.boxShadow =
         `${REPOSO}, 0 0 ${cerca}px ${look.colour}, 0 0 ${lejos}px ${look.colour}66`;
-      mark.style.filter = `${SOMBRA_BASE} drop-shadow(0 0 3px ${look.colour})`;
+      mark.style.filter = `${SOMBRA_BASE} drop-shadow(0 0 3px ${look.colour})${haloK}`;
       stage.classList.add('awake');
     }
 
@@ -377,17 +401,14 @@
   /* Hold and move: the bar follows the pointer. Started only on the bar
      itself — pressing a button must not drag the window out from under the
      finger that is pressing it. */
+  // La K y el texto de la web se pulsan: pulsarlos no arrastra la ventana.
   const agarrar = (e) => {
     if (e.button !== 0) return;
-    if (e.target.closest('button, select, input')) return;
+    if (e.target.closest('button, select, input, #mark, #web')) return;
     window.overlay.dragStart();
   };
   document.getElementById('panel').addEventListener('mousedown', agarrar);
-  stage.addEventListener('mousedown', (e) => {
-    if (e.button !== 0) return;
-    if (e.target.closest('button, select, input')) return;
-    window.overlay.dragStart();
-  });
+  stage.addEventListener('mousedown', agarrar);
   window.addEventListener('mouseup', () => window.overlay.dragEnd());
   window.addEventListener('blur', () => window.overlay.dragEnd());
 
@@ -399,11 +420,13 @@
     }).catch(() => { /* the bar already shows there is no connection */ });
   };
 
-  // The two circles that get used.
+  // Los mandos de la barra. El modo KITT es la K de la izquierda.
   document.getElementById('turn').onclick = () => ordenar('record-toggle');
-  document.getElementById('talk').onclick = () => ordenar('talk-toggle');
   document.getElementById('micmute').onclick = () => ordenar('mic-mute');
   document.getElementById('speak').onclick = () => ordenar('speak-last');
+  const alternarKitt = () => ordenar('talk-toggle');
+  mark.onclick = alternarKitt;
+  mark.onkeydown = (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); alternarKitt(); } };
 
   // El aspa: cerrar sin abrir el menú. Cerrarla nunca es un callejón — el
   // plugin la vuelve a abrir en cuanto se usa la voz.
@@ -420,14 +443,15 @@
   };
   document.getElementById('close').onclick = () => window.overlay.close();
 
-  // La marca y el pie del menú llevan a la web, en el navegador de siempre.
-  // La dirección la sabe el proceso principal, no esta página.
+  // El texto «kittcat.com» y el pie del menú llevan a la web, en el navegador
+  // de siempre. La dirección la sabe el proceso principal, no esta página.
+  // Y SÓLO EN REPOSO: la marca abriendo la web desde cualquier estado era
+  // invasiva, y un clic a destiempo mientras se habla no debe abrir nada.
   const irALaWeb = () => window.overlay.abrirWeb();
-  mark.onclick = irALaWeb;
+  const enReposo = () => modoActual === 'idle' || modoActual === 'armed';
   const web = document.getElementById('web');
-  web.onclick = irALaWeb;
-  web.onkeydown = (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); irALaWeb(); } };
-  mark.onkeydown = (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); irALaWeb(); } };
+  web.onclick = () => { if (enReposo()) irALaWeb(); };
+  web.onkeydown = (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); if (enReposo()) irALaWeb(); } };
   document.getElementById('marca').onclick = irALaWeb;
 
   // A key that could not be registered at start-up is reported here rather than

@@ -79,6 +79,17 @@ by using it; none raised an error.
   not be moved with the keyboard; a dictation cut short by the tool row
   re-rendering left the microphone open.
 
+### Changed
+
+- **The K is the KITT-mode control.** The companion bar had a red microphone
+  and a blue speech bubble side by side — two ways of talking that were easy
+  to confuse — and the brand mark opened the website, which was intrusive.
+  Now the brand's K, on the left, switches the hands-free conversation on and
+  off and lights up blue while it is on; the bubble button is gone; the
+  website opens only from the «kittcat.com» text beside it, and only at rest.
+  The bar reads, left to right: K, state, then red microphone, speaker, mute,
+  gear, close. The harness tool row mirrors it, as it always has.
+
 ### Added
 
 - `lib/paginas.js`: which page the keys belong to when more than one is

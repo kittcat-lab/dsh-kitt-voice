@@ -260,15 +260,17 @@ La barra **es los mandos**, y son los mismos que verás en la fila de
 herramientas del arnés: mismo dibujo, mismo color y mismo tamaño, porque son el
 mismo mando en dos sitios.
 
+- la **K** de la marca, a la izquierda — el modo KITT: conversación continua,
+  sin tocar nada más. Se enciende en azul mientras está en marcha y se apaga
+  desde cualquiera de los dos sitios. El texto «kittcat.com» de al lado abre
+  la web, y sólo en reposo;
 - un micrófono **rojo** — pulsa, habla y pulsa otra vez; el texto cae en la
   caja del mensaje y **lo envías tú** con Enter;
-- un bocadillo **azul** — el modo KITT: conversación continua, sin tocar nada
-  más. Se enciende y se apaga desde cualquiera de los dos sitios;
+- un altavoz — volver a leer la última respuesta, o callarla;
 - un micrófono tachado **ámbar** — **silenciar**. Para el detector de verdad,
   no disimula. Sirve justo cuando no estás mirando la pantalla: entra alguien a
   hablarte o pones un vídeo. Silenciar deja la conversación en espera, no la
   cuelga;
-- un altavoz — volver a leer la última respuesta;
 - un **engranaje** con todo lo demás: micrófono, altavoz, voz, velocidad,
   idioma y color de los botones; las teclas; callar y forma;
 - y un **aspa** para cerrar la ventana sin abrir el menú. Cerrarla nunca es un

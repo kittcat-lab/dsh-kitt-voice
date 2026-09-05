@@ -255,15 +255,17 @@ the controls** — the same ones you get in the harness's own tool row: same
 drawing, same colour, same size, because they are the same control in two
 places.
 
+- the brand's **K**, on the left — KITT mode: hands-free conversation,
+  nothing else to press. It lights up blue while the mode is on and turns off
+  from either side. The «kittcat.com» text beside it opens the website, and
+  only at rest;
 - a **red** microphone — press, speak, press again; the text lands in the
   message box and **you send it** with Enter;
-- a **blue** speech bubble — KITT mode: hands-free conversation, nothing else
-  to press. It turns on and off from either side;
+- a **speaker** — hear the last reply again, or silence it;
 - an **amber** struck-through microphone — **mute**. It stops the detector for
   real, it does not pretend. This is for the moment you are not looking at the
   screen: someone starts talking to you, or you play a video. Muting puts the
   conversation on hold; it does not hang up;
-- a **speaker** — hear the last reply again;
 - a **gear** — everything else: microphone, speaker, voice, speed, language
   and button colours; the keys; silence and shape;
 - an **×** — close the window without opening the menu. Closing is never a
