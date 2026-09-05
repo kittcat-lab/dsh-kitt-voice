@@ -53,6 +53,14 @@ y una de ellas no es cuestión de ganas:
   sostenerlo un tercio de segundo. Se vuelve a medir en cada respuesta, así que
   ponerse los cascos a mitad de sesión se adapta solo, y un portazo dura menos
   de lo necesario para dispararlo.
+- **Una voz por respuesta.** Motor, voz y velocidad se deciden al empezar una
+  respuesta y se mantienen hasta que acaba. Si el motor elegido falla, el
+  resto de esa respuesta se lee con la voz del sistema y la línea de estado lo
+  dice; la respuesta siguiente lo vuelve a intentar. Una respuesta nunca
+  cambia de voz a mitad.
+- **Dos páginas, un juego de teclas.** Con el arnés abierto en más de un
+  sitio, las teclas van a la página que está usando la voz — o, si ninguna la
+  usa, a la que tienes delante. Las demás se quedan quietas.
 - **Una voz que se deja escuchar.** 104 voces neuronales, agrupadas por
   idioma y por país: 45 en español —España y todos los países de América—, 47
   en inglés y 12 en chino. Las pone el servicio de lectura de Edge, sin clave y
@@ -264,8 +272,9 @@ mismo mando en dos sitios.
 - un **engranaje** con todo lo demás: micrófono, altavoz, voz, velocidad,
   idioma y color de los botones; las teclas; callar y forma;
 - y un **aspa** para cerrar la ventana sin abrir el menú. Cerrarla nunca es un
-  callejón: el plugin la vuelve a abrir en cuanto se usa la voz, y el engranaje
-  de la fila del arnés la abre cuando quieras.
+  callejón: el plugin la vuelve a abrir la próxima vez que se arranque la voz
+  —no en mitad de la conversación en la que la cerraste—, y el engranaje de
+  la fila del arnés la abre cuando quieras.
 
 El color del **borde** dice lo que está pasando, y se lee por el rabillo del
 ojo: **nada en reposo, verde mientras te escucha —y crece con el nivel medido
@@ -275,7 +284,8 @@ ningún color.
 
 **Teclas** (se asignan en el menú): `F8` hablar y enviar, `F9` empezar o
 terminar la conversación, `F7` silenciar el micrófono, `F10` volver a escuchar
-la respuesta, `F11` callar. Para usar un botón del volante, mapéalo a una de
+la respuesta, `F11` callar (en una conversación, también deja de esperar la
+respuesta). Para usar un botón del volante, mapéalo a una de
 esas teclas en el software del propio volante — no hace falta nada más. Las
 teclas que pertenecen a todo el sistema (Ctrl+C, Alt+F4 y compañía) se
 rechazan: un atajo global le quita la tecla a **todas** las aplicaciones de la
@@ -301,6 +311,7 @@ lib/          el plugin
   apikey.js     resolver la clave, en cada llamada, sin guardarla nunca
   log.js        una línea al arrancar, y los rechazos — jamás la clave
   freshness.js  detectar un servidor corriendo una copia vieja del plugin
+  paginas.js    qué página manda cuando hay más de una abierta
 overlay/      la ventana flotante (su propia aplicación Electron)
   main.js       la ventana, su forma y su posición
   shortcuts.js  teclas de sistema
@@ -348,12 +359,13 @@ donde una tecla pulsada fuera del navegador llega a la página.
 npm test
 ```
 
-66 pruebas, con `node --test` y sin paso de compilación. Cubren las partes
+88 pruebas, con `node --test` y sin paso de compilación. Cubren las partes
 donde equivocarse sale caro: quién puede llamar a las rutas, si un nombre de
 voz puede escaparse de su carpeta, qué promete el troceador de respuestas, que
 el rescate desde el registro nunca reviente dentro de la ruta a la que va a
 ayudar, la lista cerrada de peticiones de la ventana, el troceador de frases
-de la lectura y los pasos de velocidad.
+de la lectura, los trozos que se le dan a la voz, qué página manda cuando hay
+dos abiertas, y los pasos de velocidad.
 
 ## Lo que falta
 
@@ -366,7 +378,7 @@ de la lectura y los pasos de velocidad.
 
 ## Las trampas ya pagadas
 
-Dieciséis fallos que costaron una tarde cada uno, escritos con su síntoma:
+Veintitrés fallos que costaron una tarde cada uno, escritos con su síntoma:
 [Las trampas ya pagadas](https://github.com/kittcat-lab/dsh-kitt-voice/blob/main/DOCUMENTACION/TRAPS.es.md). Todos salieron usándolo y
 no leyendo el código, y ninguno daba un error. Antes de tocar la parte que le
 toca a cada uno, se lee la suya.

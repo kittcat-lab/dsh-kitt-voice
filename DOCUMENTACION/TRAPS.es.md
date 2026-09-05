@@ -2,7 +2,7 @@
 
 *[English](TRAPS.md) | [简体中文](TRAPS.zh.md)*
 
-Dieciséis fallos que costaron una tarde entera cada uno. **Todos salieron
+Veintitrés fallos que costaron una tarde entera cada uno. **Todos salieron
 USÁNDOLO, ninguno leyendo el código, y ninguno daba un error** — por eso están
 escritos: son justo los que no se encuentran mirando.
 
@@ -97,6 +97,54 @@ vuelve a aparecer, es una regresión y pesa más que un hallazgo nuevo.
     están grabando entero. Significa que hay una voz AHORA. Entre turno y
     turno, reposo.
 
+
+## En la conversación, ya en uso
+
+17. **El eco sobrevive a la lectura.** El detector sigue oyendo el eco de la
+    última frase hasta que pasa SU segundo y medio de silencio. Reabrir el
+    oído medio segundo después de que calle el altavoz es reabrirlo antes de
+    que el detector dé por terminada esa «voz»: su final llega con el oído ya
+    abierto, y lo que trae es la propia respuesta del plugin, que se transcribe
+    y se le manda al agente como si lo hubiera dicho la persona. Pausar el
+    detector lo vacía; arrancarlo, no. Se pausa, se espera, se arranca.
+18. **Una frase del sistema que no termina nunca.** La voz del navegador
+    (Chrome) se calla a mitad de una frase larga y no dispara ni «end» ni
+    «error». Una promesa que espera ese final no se resuelve jamás: el ciclo
+    entero se queda esperando, la barra en rojo, y ni callar ni apagar sacan de
+    ahí. Vigía por frase, latido de pausa/reanudar para las voces no locales, y
+    nunca más de doscientas y pico letras de una vez.
+19. **El suelo del eco se mide cuando SUENA, no cuando se pide.** Entre pedir
+    la primera frase a la voz neuronal y oírla pasa un segundo. Calibrar en ese
+    segundo es calibrar la habitación en silencio: el suelo sale casi cero, y
+    en cuanto la respuesta empieza a sonar su propio eco pasa el listón y la
+    corta. «Se para sola.» El reloj arranca con el primer sonido.
+20. **Callar una frase y seguir con la siguiente es no callar.** La tecla de
+    callar cortaba el audio en curso; el ciclo de lectura, que no se enteraba,
+    pedía la frase siguiente medio segundo después. Y una petición en vuelo
+    cuando se manda callar llega igual y suena igual. Callar es una bandera que
+    el ciclo consulta entre trozo y trozo, y un número que quien va a
+    reproducir compara antes de sonar.
+21. **La guardia de «ya hay una» tiene que ser síncrona, y el mando no puede
+    vivir en un botón.** Se comprobaba después de dos esperas; dos pulsaciones
+    seguidas pasaban las dos y nacían dos detectores con dos micrófonos. Y el
+    mando de la conversación estaba en una referencia de React de un botón que
+    el arnés quita y vuelve a poner: se perdía, y el detector seguía corriendo
+    sin dueño. La bandera va antes de la primera espera y el mando, fuera del
+    componente.
+22. **Dos páginas son dos plugins.** La aplicación instalada y una pestaña
+    cargan el plugin las dos, las dos abren el flujo de órdenes y las dos
+    publican estado: cada tecla abría dos micrófonos y la ventana flotante
+    pintaba una y otra a saltos. Alguien tiene que repartir, y es el servidor:
+    manda la página que usa la voz; si ninguna, la que tiene el foco.
+23. **La voz cambia sola cuando cada frase decide por su cuenta.** Tres causas
+    juntas: el motor se decidía por frase, y un tropiezo de red mandaba ESA
+    frase a la voz del sistema y la siguiente otra vez al motor; la lista de
+    voces del sistema está vacía en Chrome hasta que avisa, así que la primera
+    frase salía con la voz por defecto —a veces inglesa—; y el servidor
+    recortaba a dos mil letras sin decirlo mientras Piper se pasaba de tiempo
+    con un trozo largo y caía a la del sistema. Motor, voz y ritmo se deciden
+    una vez por respuesta; un motor caído se queda caído hasta la siguiente, y
+    se dice.
 ---
 
 ## Y tres de medir, que valen para cualquier proyecto

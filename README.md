@@ -52,6 +52,20 @@ do, and one of them is not a matter of effort:
   spoken yet. To count as a voice, sound has to clear that floor by 3× and hold
   for a third of a second. It re-measures on every reply, so putting headphones
   on mid-session adapts by itself, and a door slam is too short to trigger it.
+- **One voice per reply.** Engine, voice and speed are decided when a reply
+  starts and kept until it ends. If the chosen engine fails, the rest of that
+  reply is read with the built-in voice and the status line says so; the next
+  reply tries the engine again. A reply never switches voices halfway.
+- **Two pages, one set of keys.** With the harness open in more than one
+  place, the keys go to the page that is using the voice — or, when none is,
+  to the one in front of you. The others stay quiet.
+- **One voice per reply.** Engine, voice and speed are decided when a reply
+  starts and kept until it ends. If the chosen engine fails, the rest of that
+  reply is read with the built-in voice and the status line says so; the next
+  reply tries the engine again. A reply never switches voices halfway.
+- **Two pages, one set of keys.** With the harness open in more than one
+  place, the keys go to the page that is using the voice — or, when none is,
+  to the one in front of you. The others stay quiet.
 - **A voice worth listening to.** 104 neural voices, grouped by language and
   by country: 45 Spanish — Spain and every Spanish-speaking country in the
   Americas — 47 English and 12 Chinese. They are read out by Microsoft's
@@ -253,8 +267,9 @@ places.
 - a **gear** — everything else: microphone, speaker, voice, speed, language
   and button colours; the keys; silence and shape;
 - an **×** — close the window without opening the menu. Closing is never a
-  dead end: the plugin opens it again the moment the voice is used, and the
-  gear in the harness tool row opens it whenever you want.
+  dead end: the plugin opens it again the next time the voice is started —
+  not in the middle of a conversation you closed it during — and the gear in
+  the harness tool row opens it whenever you want.
 
 The **border** carries the state, so it can be read out of the corner of an
 eye: **nothing at rest, green while it listens — growing with the measured
@@ -266,7 +281,8 @@ Drag it anywhere by holding it, and it remembers where you left it.
 
 **Keys** (assign them in the menu): `F8` speak and send, `F9` start or end the
 conversation, `F7` mute the microphone, `F10` hear the reply again, `F11` be
-quiet, `F6` open the menu. To use a wheel button, map it to one of those keys
+quiet (in a conversation it also ends the wait for the reply), `F6` open the
+menu. To use a wheel button, map it to one of those keys
 in your wheel's own software — no gamepad plumbing needed. Keys belonging to
 the whole system (Ctrl+C, Alt+F4 and friends) are refused: a global shortcut
 takes the key away from every application on the machine.
@@ -291,6 +307,8 @@ lib/          the plugin
   apikey.js     resolving the key, per call, never cached
   log.js        one startup line, and refusals — never the key
   freshness.js  detecting a server running an older copy of this plugin
+  paginas.js    which page the keys belong to when more than one is open
+  paginas.js    which page the keys belong to when more than one is open
 overlay/      the companion window (its own Electron app)
   main.js       the window, its shape and position
   shortcuts.js  system-wide keys
@@ -336,11 +354,12 @@ how a key pressed outside the browser reaches the page.
 npm test
 ```
 
-66 tests, run with `node --test`, no build step. They cover the parts where a
+88 tests, run with `node --test`, no build step. They cover the parts where a
 mistake is expensive: who may call the routes, whether a voice name can escape
 its folder, what the reply splitter promises, that the log fallback never
 throws inside the route it exists to help, the window's request allowlist, the
-read-aloud sentence splitter and the speed steps.
+read-aloud sentence splitter, the pieces handed to the voices, which page the
+keys belong to when two are open, and the speed steps.
 
 ## What is missing
 
@@ -352,7 +371,7 @@ read-aloud sentence splitter and the speed steps.
 
 ## Traps already paid for
 
-Sixteen bugs that each cost an afternoon, written down with their symptoms:
+Twenty-three bugs that each cost an afternoon, written down with their symptoms:
 [Traps already paid for](https://github.com/kittcat-lab/dsh-kitt-voice/blob/main/DOCUMENTACION/TRAPS.md). Every one of them turned up by
 using the thing rather than by reading the code, and not one raised an error.
 Read the relevant one before touching the part it belongs to.

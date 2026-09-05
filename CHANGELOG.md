@@ -5,6 +5,79 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0] - 2026-09-05
+
+**The conversation no longer gets stuck, talks to itself, or changes voice
+mid-reply — and the keys go to one page only.** Every one of these was found
+by using it; none raised an error.
+
+### Fixed
+
+- **A reply that never ended.** Chrome's built-in voice sometimes stops
+  mid-utterance without firing `end` or `error`. The read-aloud loop awaited
+  that promise forever: the bar stayed red, «be quiet» did nothing, and the
+  conversation could not be switched off. Every utterance now has a watchdog
+  sized to its text, non-local voices get a keep-alive, and no voice is ever
+  handed more than 220 characters at once.
+- **It transcribed its own voice.** The detector keeps hearing the reply's
+  echo until its own 1.4 s of silence has passed; the ear was reopened 500 ms
+  after the audio ended, so the echo's «speech end» arrived on an open ear and
+  was sent to the agent as if the person had said it. The detector is now
+  paused — which empties it — before the ear reopens.
+- **It cut itself off.** The echo floor was measured from the moment the first
+  sentence was *requested*, not from when it started to *sound*. With the
+  neural voice that is a second of silence, so the floor came out near zero
+  and the reply's own echo cleared it. Calibration now starts when audio
+  actually plays.
+- **«Be quiet» did not.** In a conversation, F11 silenced the current sentence
+  and the loop carried on with the next; a piece already being fetched played
+  anyway. It now ends the reading and the wait, and a stop requested mid-fetch
+  is honoured.
+- **Ending the conversation waited for the paragraph to finish.** The blue
+  button closed the detector but let the current audio play out. It stops the
+  voice first.
+- **Two conversations from a double press.** The «already running» check came
+  after two awaits. It is now a synchronous flag.
+- **A conversation nobody could stop.** Its handle lived in a React ref of the
+  microphone button; when the harness re-rendered the tool row the handle was
+  lost and the detector kept running. It now lives outside the component.
+- **The voice changed mid-reply.** Three causes, all fixed: the engine was
+  re-decided per sentence, so one transient failure switched that one sentence
+  to the system voice; Chrome's system voice list is empty until
+  `voiceschanged` fires, so the first sentence got the default — often
+  English — voice; and the server truncated any request over 2000 characters
+  without saying so, while Piper timed out on long ones and fell back. Engine,
+  voice and rate are now decided once per reply, a failed engine stays failed
+  for the rest of that reply (and the status line says so), voices are
+  collected ahead of time, and nothing longer than 220 characters is ever
+  requested.
+- **Closing the companion window did not close it.** With `overlayAuto` on,
+  the window was re-launched on *every* active state, so during a conversation
+  it came back half a second after the × was pressed, sometimes racing its own
+  single-instance lock. It now opens only when the voice goes from idle to in
+  use; closed by hand, it stays closed until the next time the voice is
+  started, or until the gear asks for it.
+- **Two pages, one set of keys.** With the harness open in the installed app
+  and in a tab, both received every order — two microphones, two sends — and
+  the companion window flickered between their states. Each page now
+  identifies itself; the harness sends each key to the page that is using the
+  voice (or, when none is, the one in front), and only accepts state from it.
+- Smaller: a noise while the agent was thinking cleared «Thinking» from the
+  screen; an empty transcription left «Listening» stuck on; the dictation key
+  pressed during a conversation opened a second microphone (it now says the
+  conversation is on instead); the turn detector's download had no time
+  limit; a notice such as «read with the built-in voice» was stored but never
+  shown; the companion window's menu swallowed every key, so its lists could
+  not be moved with the keyboard; a dictation cut short by the tool row
+  re-rendering left the microphone open.
+
+### Added
+
+- `lib/paginas.js`: which page the keys belong to when more than one is
+  open, with 10 tests.
+- 9 tests over the splitter that feeds the voices.
+- Seven new entries in the traps document, one per fault above.
+
 ## [0.2.1] - 2026-09-02
 
 **Fixes a 0.2.0 that does not load at all.** If you installed 0.2.0, the

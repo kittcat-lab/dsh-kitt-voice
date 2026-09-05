@@ -332,10 +332,12 @@
 
   window.addEventListener('keydown', async (event) => {
     if (panel.hidden) return;
-    event.preventDefault();
 
-    if (event.key === 'Escape') { waitingFor = null; problem.textContent = ''; drawRows(await window.overlay.keysList()); return; }
+    if (event.key === 'Escape') { event.preventDefault(); waitingFor = null; problem.textContent = ''; drawRows(await window.overlay.keysList()); return; }
+    // Sólo se tragan las teclas mientras se está eligiendo una: antes se
+    // tragaban todas y las listas del menú no se podían mover con el teclado.
     if (!waitingFor) return;
+    event.preventDefault();
 
     const accelerator = asAccelerator(event);
     if (!accelerator) return; // still holding modifiers down

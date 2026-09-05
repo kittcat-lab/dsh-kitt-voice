@@ -2,7 +2,7 @@
 
 *[Español](TRAPS.es.md) · [简体中文](TRAPS.zh.md)*
 
-Sixteen bugs that cost an afternoon each. **Every one of them turned up by
+Twenty-three bugs that cost an afternoon each. **Every one of them turned up by
 USING the thing, none by reading the code, and not one of them raised an
 error** — which is exactly why they are written down: these are the ones you
 cannot find by looking.
@@ -97,6 +97,55 @@ ever comes back, it is a regression, and a regression outweighs a new find.
     are being recorded wholesale. It means there is a voice RIGHT NOW. Between
     turns, at rest.
 
+
+## In the conversation, once in use
+
+17. **The echo outlives the reading.** The detector keeps hearing the echo of
+    the last sentence until ITS 1.4 s of silence has passed. Reopening the ear
+    half a second after the speaker goes quiet is reopening it before the
+    detector has closed that "voice": its end arrives on an open ear, and what
+    it carries is the plugin's own reply, which gets transcribed and sent to
+    the agent as if the person had said it. Pausing the detector empties it;
+    starting it does not. Pause, wait, start.
+18. **A system utterance that never ends.** The browser's voice (Chrome)
+    stops mid-way through a long utterance and fires neither `end` nor
+    `error`. A promise waiting for that end never resolves: the whole loop
+    sits waiting, the bar stays red, and neither "be quiet" nor "switch off"
+    gets you out. A watchdog per utterance, a pause/resume heartbeat for
+    non-local voices, and never more than a couple of hundred characters at
+    once.
+19. **The echo floor is measured when it SOUNDS, not when it is asked for.**
+    Between asking the neural voice for the first sentence and hearing it, a
+    second passes. Calibrating in that second is calibrating a silent room:
+    the floor comes out near zero, and as soon as the reply starts to sound its
+    own echo clears the bar and cuts it. "It stops by itself." The clock starts
+    with the first sound.
+20. **Silencing one sentence and carrying on with the next is not silence.**
+    The quiet key cut the current audio; the reading loop, which never heard
+    about it, asked for the next sentence half a second later. And a request
+    already in flight when quiet is ordered arrives anyway and plays anyway.
+    Quiet is a flag the loop checks between pieces, and a counter that
+    whoever is about to play compares before playing.
+21. **The "already running" guard has to be synchronous, and the handle
+    cannot live in a button.** It was checked after two awaits; two presses
+    in a row passed both, and two detectors with two microphones were born. And
+    the conversation's handle sat in a React ref of a button the harness
+    unmounts and remounts: the handle was lost and the detector kept running
+    with no owner. The flag goes before the first await, and the handle
+    outside the component.
+22. **Two pages are two plugins.** The installed app and a tab both load the
+    plugin, both open the order stream and both publish state: every key
+    opened two microphones, and the companion window painted one and then the
+    other. Somebody has to deal the keys, and it is the server: the page using
+    the voice; failing that, the one with focus.
+23. **The voice changes by itself when every sentence decides on its own.**
+    Three causes together: the engine was decided per sentence, so a network
+    hiccup sent THAT sentence to the system voice and the next one back to the
+    engine; Chrome's system voice list is empty until it says otherwise, so the
+    first sentence came out in the default — often English — voice; and the
+    server truncated at two thousand characters without saying so while Piper
+    timed out on a long piece and fell back. Engine, voice and rate are decided
+    once per reply; a failed engine stays failed until the next, and says so.
 ---
 
 ## And three about measuring, good for any project
