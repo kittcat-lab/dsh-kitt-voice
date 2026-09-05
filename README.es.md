@@ -8,7 +8,7 @@ Pulsas una tecla, dices lo que quieras, y el agente te contesta en voz alta.
 Una ventana pequeña flota por encima de lo que estés haciendo y te dice qué
 está pasando.
 
-> **Estado: funciona, es reciente.** La conversación hablada, la ventana
+> **Estado: versión 1.0, en uso diario.** La conversación hablada, la ventana
 > flotante y las teclas globales están hechas y se usan a diario. La interfaz
 > habla español, inglés y chino simplificado. Whisper local no está escrito;
 > ver [Lo que falta](#lo-que-falta).

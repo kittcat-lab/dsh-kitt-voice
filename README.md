@@ -8,7 +8,7 @@ Press a key, say what you want, and the agent answers out loud. A small
 companion window floats above whatever you are doing and shows what is
 happening.
 
-> **Status: working, early.** The spoken conversation, the companion window
+> **Status: 1.0, in daily use.** The spoken conversation, the companion window
 > and the global keys are done and used daily. The interface speaks Spanish,
 > English and Simplified Chinese. Local Whisper is not written; see
 > [What is missing](#what-is-missing).
